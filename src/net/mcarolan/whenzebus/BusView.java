@@ -2,8 +2,8 @@ package net.mcarolan.whenzebus;
 
 import java.util.Set;
 
-import net.mcarolan.whenzebus.api.Prediction;
-import net.mcarolan.whenzebus.api.PredictionClient;
+import net.mcarolan.whenzebus.api.Response;
+import net.mcarolan.whenzebus.api.Client;
 import net.mcarolan.whenzebus.api.StopCode1;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -25,16 +25,16 @@ public class BusView extends ActionBarActivity {
 	
 	private final WhenZeBusDAL dal = new WhenZeBusDAL(this);
 	
-	class DisplayBusTimesTask extends AsyncTask<String, Void, Set<Prediction>> {
+	class DisplayBusTimesTask extends AsyncTask<String, Void, Set<Response>> {
 
 		@Override
-		protected Set<Prediction> doInBackground(String... params) {
-	        final PredictionClient predictionClient = new PredictionClient("http://countdown.api.tfl.gov.uk", new StopCode1("76458"));
+		protected Set<Response> doInBackground(String... params) {
+	        final Client predictionClient = new Client("http://countdown.api.tfl.gov.uk", new StopCode1("76458"));
 			return predictionClient.getPredictions();
 		}
 		
 		@Override
-		protected void onPostExecute(Set<Prediction> result) {
+		protected void onPostExecute(Set<Response> result) {
 			super.onPostExecute(result);
 	        final ArrayAdapter<PredictionModel> arrayAdapter = new PredictionModelAdapter(BusView.this, result);
 	        final ListView listView = (ListView) findViewById(R.id.listview);

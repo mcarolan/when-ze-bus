@@ -1,15 +1,15 @@
 package net.mcarolan.whenzebus.api.predictionfield;
 
-import net.mcarolan.whenzebus.api.Prediction;
+import net.mcarolan.whenzebus.api.Response;
 
 import org.joda.time.DateTime;
 
-public class DateTimePredictionField implements PredictionField {
+public class DateTimeField implements Field {
 	
-	private final LongPredictionField longPredictionField;
+	private final LongField longPredictionField;
 	
-	public DateTimePredictionField(String fieldName, int sequenceNumber) {
-		longPredictionField = new LongPredictionField(fieldName, sequenceNumber);
+	public DateTimeField(String fieldName, int sequenceNumber) {
+		longPredictionField = new LongField(fieldName, sequenceNumber);
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public class DateTimePredictionField implements PredictionField {
 		return longPredictionField.getSequenceNumber();
 	}
 	
-	public DateTime extract(Prediction prediction) {
+	public DateTime extract(Response prediction) {
 		final long timestamp = longPredictionField.extract(prediction);
 		return new DateTime(timestamp);
 	}

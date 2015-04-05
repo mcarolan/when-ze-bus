@@ -18,28 +18,28 @@ import com.google.common.collect.Lists;
 
 import net.mcarolan.whenzebus.TimeRemainingCalculator.TimeRemaining;
 import net.mcarolan.whenzebus.api.EstimatedTimeComparator;
-import net.mcarolan.whenzebus.api.Prediction;
-import net.mcarolan.whenzebus.api.predictionfield.PredictionFields;
+import net.mcarolan.whenzebus.api.Response;
+import net.mcarolan.whenzebus.api.predictionfield.Fields;
 
 public class PredictionModelAdapter extends ArrayAdapter<PredictionModel> {
 	
-	public PredictionModelAdapter(Context context, Set<Prediction> predictions) {
+	public PredictionModelAdapter(Context context, Set<Response> predictions) {
 		super(context, R.layout.listitem, toPredictionModelList(predictions));
 	}
 	
-	private static List<PredictionModel> toPredictionModelList(Set<Prediction> predictions) {
-		List<Prediction> predictionList = Lists.newArrayList(predictions);
+	private static List<PredictionModel> toPredictionModelList(Set<Response> predictions) {
+		List<Response> predictionList = Lists.newArrayList(predictions);
 		Collections.sort(predictionList, new EstimatedTimeComparator());
 		return Lists.transform(predictionList, transform);
 	}
 	
-	private final static Function<Prediction, PredictionModel> transform = new Function<Prediction, PredictionModel>() {
+	private final static Function<Response, PredictionModel> transform = new Function<Response, PredictionModel>() {
 		
-		public PredictionModel apply(Prediction prediction) {
-			return new PredictionModel(PredictionFields.LineName.extract(prediction),
-					PredictionFields.DestinationText.extract(prediction),
-					PredictionFields.EstimatedTime.extract(prediction),
-					PredictionFields.ExpireTime.extract(prediction));
+		public PredictionModel apply(Response prediction) {
+			return new PredictionModel(Fields.LineName.extract(prediction),
+					Fields.DestinationText.extract(prediction),
+					Fields.EstimatedTime.extract(prediction),
+					Fields.ExpireTime.extract(prediction));
 		}
 		
 	};

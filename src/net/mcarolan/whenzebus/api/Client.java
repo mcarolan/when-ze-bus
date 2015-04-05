@@ -14,34 +14,34 @@ import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 
 import android.util.Log;
-import net.mcarolan.whenzebus.api.predictionfield.PredictionField;
-import net.mcarolan.whenzebus.api.predictionfield.PredictionFields;
+import net.mcarolan.whenzebus.api.predictionfield.Field;
+import net.mcarolan.whenzebus.api.predictionfield.Fields;
 
-public class PredictionClient {
+public class Client {
 	
 	private final String baseUri;
-	private final Set<? extends PredictionField> fields;
+	private final Set<? extends Field> fields;
 	private final StopCode1 stopCode1;
 	
 	private final String TAG = "PredictionClient";
 	
-	public static final Set<? extends PredictionField> DEFAULT_PREDICTION_FIELDS = 
-			Sets.newHashSet(PredictionFields.EstimatedTime, PredictionFields.ExpireTime, PredictionFields.DestinationText, PredictionFields.LineName);
+	public static final Set<? extends Field> DEFAULT_PREDICTION_FIELDS = 
+			Sets.newHashSet(Fields.EstimatedTime, Fields.ExpireTime, Fields.DestinationText, Fields.LineName);
 	
-	public PredictionClient(String baseUri,
+	public Client(String baseUri,
 			 StopCode1 stopCode1) {
 		this(baseUri, stopCode1, DEFAULT_PREDICTION_FIELDS);
 	}
 	
-	public PredictionClient(String baseUri,
-			 StopCode1 stopCode1, Set<? extends PredictionField> fields) {
+	public Client(String baseUri,
+			 StopCode1 stopCode1, Set<? extends Field> fields) {
 		this.baseUri = baseUri;
 		this.fields = fields;
 		this.stopCode1 = stopCode1;
 	}
 	
-	public Set<Prediction> getPredictions() {
-		final PredictionRequest predictionRequest = new PredictionRequest(fields, stopCode1);
+	public Set<Response> getPredictions() {
+		final Request predictionRequest = new Request(fields, stopCode1);
 		final String uri = baseUri + predictionRequest.getURI();
 		final URL url;
 		
@@ -99,7 +99,7 @@ public class PredictionClient {
 			}
 			
 
-			final PredictionResponseParser predictionResponseParser = new PredictionResponseParser(response, new PredictionParser());
+			final ResponseParser predictionResponseParser = new ResponseParser(response);
 			return predictionResponseParser.extractPredictions(fields);
 		}
 		finally {

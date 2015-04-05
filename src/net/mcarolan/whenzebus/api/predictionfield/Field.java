@@ -1,6 +1,6 @@
 package net.mcarolan.whenzebus.api.predictionfield;
 
-public interface PredictionField {
+public interface Field {
 	String getFieldName();
 	int getSequenceNumber();
 }

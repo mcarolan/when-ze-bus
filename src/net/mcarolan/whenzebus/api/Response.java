@@ -2,18 +2,18 @@ package net.mcarolan.whenzebus.api;
 
 import java.util.Map;
 
-import net.mcarolan.whenzebus.api.predictionfield.PredictionField;
+import net.mcarolan.whenzebus.api.predictionfield.Field;
 
 import com.google.common.collect.ImmutableMap;
 
-public class Prediction {
+public class Response {
 	
 	private final ImmutableMap<String, String> fieldNameToStringValue;
 	
-	public Prediction(final Map<PredictionField, String> fieldToValue) {
+	public Response(final Map<Field, String> fieldToValue) {
 		final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
 		
-		for (Map.Entry<PredictionField, String> entry : fieldToValue.entrySet()) {
+		for (Map.Entry<Field, String> entry : fieldToValue.entrySet()) {
 			builder.put(entry.getKey().getFieldName(), entry.getValue());
 		}
 		
@@ -43,7 +43,7 @@ public class Prediction {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Prediction other = (Prediction) obj;
+		Response other = (Response) obj;
 		if (fieldNameToStringValue == null) {
 			if (other.fieldNameToStringValue != null)
 				return false;

@@ -1,16 +1,16 @@
 package net.mcarolan.whenzebus.api.predictionfield;
 
-import net.mcarolan.whenzebus.api.Prediction;
+import net.mcarolan.whenzebus.api.Response;
 import android.util.Log;
 
-public class LongPredictionField implements PredictionField {
+public class DoubleField implements Field {
 	
-	private static final String TAG = "LongPredictionField";
+	private static final String TAG = "DoublePredictionField";
 	
 	private final String fieldName;
 	private final int sequenceNumber;
 	
-	public LongPredictionField(String fieldName, int sequenceNumber) {
+	public DoubleField(String fieldName, int sequenceNumber) {
 		this.fieldName = fieldName;
 		this.sequenceNumber = sequenceNumber;
 	}
@@ -25,20 +25,20 @@ public class LongPredictionField implements PredictionField {
 		return sequenceNumber;
 	}
 	
-	public long extract(Prediction prediction) {
+	public double extract(Response prediction) {
 		final String stringValue = prediction.getStringValueFromFieldName(fieldName);
-		final long longValue;
+		final double doubleValue;
 		
 		try {
-			longValue = Long.parseLong(stringValue);
+			doubleValue = Double.parseDouble(stringValue);
 		}
 		catch (NumberFormatException e) {
-			final String message = stringValue + " was not a valid long value in field " + fieldName;
+			final String message = stringValue + " was not a valid double value in field " + fieldName;
 			Log.e(TAG, message, e);
 			throw new IllegalStateException(message, e);
 		}
 		
-		return longValue;
+		return doubleValue;
 	}
 	
 }

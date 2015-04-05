@@ -1,13 +1,13 @@
 package net.mcarolan.whenzebus.api.predictionfield;
 
-import net.mcarolan.whenzebus.api.Prediction;
+import net.mcarolan.whenzebus.api.Response;
 
-public class StringPredictionField implements PredictionField {
+public class StringField implements Field {
 	
 	private final String fieldName;
 	private final int sequenceNumber;
 
-	public StringPredictionField(String fieldName, int sequenceNumber) {
+	public StringField(String fieldName, int sequenceNumber) {
 		this.fieldName = fieldName;
 		this.sequenceNumber = sequenceNumber;
 	}
@@ -22,7 +22,7 @@ public class StringPredictionField implements PredictionField {
 		return sequenceNumber;
 	}
 	
-	public String extract(Prediction prediction) {
+	public String extract(Response prediction) {
 		return prediction.getStringValueFromFieldName(fieldName);
 	}
 	

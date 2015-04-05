@@ -3,23 +3,23 @@ package net.mcarolan.whenzebus.api;
 import java.util.List;
 import java.util.Set;
 
-import net.mcarolan.whenzebus.api.predictionfield.PredictionField;
-import net.mcarolan.whenzebus.api.predictionfield.PredictionFieldName;
-import net.mcarolan.whenzebus.api.predictionfield.PredictionFields;
+import net.mcarolan.whenzebus.api.predictionfield.Field;
+import net.mcarolan.whenzebus.api.predictionfield.FieldName;
+import net.mcarolan.whenzebus.api.predictionfield.Fields;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-public class PredictionRequest {
+public class Request {
 	
-	private final Set<? extends PredictionField> fields;
+	private final Set<? extends Field> fields;
 	private final StopCode1 stopCode1;
 	
-	public PredictionRequest(final Set<? extends PredictionField> fields, final StopCode1 stopCode1) {
+	public Request(final Set<? extends Field> fields, final StopCode1 stopCode1) {
 		this.fields = fields;
 		this.stopCode1 = stopCode1;
 		
-		if (fields.contains(PredictionFields.EstimatedTime) && !fields.contains(PredictionFields.ExpireTime)) {
+		if (fields.contains(Fields.EstimatedTime) && !fields.contains(Fields.ExpireTime)) {
 			throw new IllegalArgumentException(fields.toString() + " contained EstimatedTime, but not ExpireTime");
 		}
 	}
@@ -36,7 +36,7 @@ public class PredictionRequest {
 	}
 
 	private String createReturnList() {
-		final List<String> fieldNames = Lists.transform(Lists.newArrayList(fields), PredictionFieldName.transformer);
+		final List<String> fieldNames = Lists.transform(Lists.newArrayList(fields), FieldName.transformer);
 		final Joiner joiner = Joiner.on(",");
 		return joiner.join(fieldNames);
 	}
