@@ -40,5 +40,10 @@ public class DoubleField implements Field {
 		
 		return doubleValue;
 	}
+
+	@Override
+	public String toString() {
+		return getFieldName() + "/DoubleField";
+	}
 	
 }

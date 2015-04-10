@@ -2,8 +2,16 @@ package net.mcarolan.whenzebus;
 
 import org.joda.time.DateTime;
 
+import android.content.Context;
+
 public class TimeRemainingCalculator {
 	
+	private final Context context;
+	
+	public TimeRemainingCalculator(Context context) {
+		this.context = context;
+	}
+
 	public class TimeRemaining {
 		private final boolean isInPast;
 		private final String timeRemainingString;
@@ -37,19 +45,19 @@ public class TimeRemainingCalculator {
 		sb.append(difference.getMinuteOfHour());
 		
 		if (difference.getMinuteOfHour() == 1) {
-			sb.append(" minute and ");
+			sb.append(context.getResources().getString(R.string.time_oneminute));
 		}
 		else {
-			sb.append(" minutes and ");
+			sb.append(context.getResources().getString(R.string.time_manyminutes));
 		}
 		
 		sb.append(difference.getSecondOfMinute());
 		
 		if (difference.getSecondOfMinute() == 1) {
-			sb.append(" second");
+			sb.append(context.getResources().getString(R.string.time_onesecond));
 		}
 		else {
-			sb.append(" seconds");
+			sb.append(context.getResources().getString(R.string.time_manyseconds));
 		}
 		
 		return new TimeRemaining(false, sb.toString());

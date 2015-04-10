@@ -14,9 +14,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnShowListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -64,18 +61,6 @@ public class AddDialog extends DialogFragment {
 				this.isSuccess = isSuccess;
 			}
 			
-			public boolean isSuccess() {
-				return isSuccess;
-			}
-
-			public Throwable getError() {
-				return error;
-			}
-
-			public Set<Response> getResponses() {
-				return responses;
-			}
-			
 		}
 		
 		private class LookupBusInformation extends AsyncTask<Void, Void, LookupBusInformationResult> {
@@ -97,12 +82,12 @@ public class AddDialog extends DialogFragment {
 			@Override
 			protected void onPostExecute(LookupBusInformationResult result) {
 				if (result.isSuccess) {
-					if (result.getResponses().size() != 1) {
-						errorTextView.setText("Invalid response from bus information server. Please try again later.");
+					if (result.responses.size() != 1) {
+						errorTextView.setText(getResources().getString(R.string.adddialog_invalid_response));
 						errorTextView.setVisibility(View.VISIBLE);
 					}
 					else {
-						final Response first = result.getResponses().iterator().next();
+						final Response first = result.responses.iterator().next();
 						final String stopPointName = Fields.StopPointName.extract(first);
 						Log.i(TAG, "StopPointName " + stopPointName);
 						dal.addBusStop(stopCode1,  new StopPointName(stopPointName));
@@ -110,13 +95,13 @@ public class AddDialog extends DialogFragment {
 					}
 				}
 				else {
-					Log.e(TAG, "Could not look up bus information", result.getError());
-					if (result.getError() instanceof UnknownBusStop) {
-						errorTextView.setText("Couldn't find a bus stop with that SMS code");
+					Log.e(TAG, "Could not look up bus information", result.error);
+					if (result.error instanceof UnknownBusStop) {
+						errorTextView.setText(getResources().getString(R.string.adddialog_bad_smscode));
 						errorTextView.setVisibility(View.VISIBLE);
 					}
 					else {
-						errorTextView.setText("There was a problem contacting the bus information server. Please try again later.");
+						errorTextView.setText(getResources().getString(R.string.adddialog_could_not_communicate));
 						errorTextView.setVisibility(View.VISIBLE);
 					}
 				}

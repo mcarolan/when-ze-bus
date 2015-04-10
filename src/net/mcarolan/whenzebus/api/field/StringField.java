@@ -25,5 +25,10 @@ public class StringField implements Field {
 	public String extract(Response prediction) {
 		return prediction.getStringValueFromFieldName(fieldName);
 	}
+
+	@Override
+	public String toString() {
+		return getFieldName() + "/StringField";
+	}
 	
 }

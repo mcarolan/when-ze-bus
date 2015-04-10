@@ -2,7 +2,14 @@
 <resources>
 
     <string name="app_name">When Ze Bus</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-
+	<string name="busview_loading">Loading...</string>
+	<string name="adddialog_invalid_response">Invalid response from bus information server. Please try again later.</string>
+	<string name="adddialog_bad_smscode">Couldn\'t find a bus stop with that SMS code.</string>
+	<string name="adddialog_could_not_communicate">There was a problem contacting the bus information server. Please try again later.</string>
+	<string name="prediction_duein">"Due in "</string>
+	<string name="prediction_due">Due</string>
+	<string name="time_oneminute">" minute and "</string>
+	<string name="time_manyminutes">" minutes and "</string>
+	<string name="time_onesecond">" second"</string>
+	<string name="time_manyseconds">" seconds"</string>
 </resources>

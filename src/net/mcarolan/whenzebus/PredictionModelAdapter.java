@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.joda.time.DateTime;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +21,11 @@ import net.mcarolan.whenzebus.api.field.Fields;
 
 public class PredictionModelAdapter extends ArrayAdapter<PredictionModel> {
 	
+	private final TimeRemainingCalculator calculator;
+	
 	public PredictionModelAdapter(Context context, Set<Response> predictions) {
 		super(context, R.layout.listitem, toPredictionModelList(predictions));
+		calculator = new TimeRemainingCalculator(context);
 	}
 	
 	private static List<PredictionModel> toPredictionModelList(Set<Response> predictions) {
@@ -58,15 +59,14 @@ public class PredictionModelAdapter extends ArrayAdapter<PredictionModel> {
 		destinationText.setText(item.getDestinationText());
 		lineName.setText(item.getLineName());
 		
-		final TimeRemainingCalculator timeRemainingCalculator = new TimeRemainingCalculator();
-		final TimeRemaining timeRemaining = timeRemainingCalculator.getTimeRemaining(item.getEstimatedTime());
+		final TimeRemaining timeRemaining = calculator.getTimeRemaining(item.getEstimatedTime());
 		
 		
 		if (timeRemaining.isInPast()) {
-			estimatedTime.setText("Due");
+			estimatedTime.setText(rowView.getResources().getString(R.string.prediction_due));
 		}
 		else {
-			estimatedTime.setText("Due in " + timeRemaining.getTimeRemainingString());
+			estimatedTime.setText(rowView.getResources().getString(R.string.prediction_duein) + timeRemaining.getTimeRemainingString());
 		}
 		
 		return rowView;

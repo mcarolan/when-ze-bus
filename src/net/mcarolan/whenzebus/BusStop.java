@@ -20,5 +20,10 @@ public class BusStop {
 	public StopPointName getStopPointName() {
 		return stopPointName;
 	}
+
+	@Override
+	public String toString() {
+		return "BusStop [" + stopCode1 + ", " + stopPointName + "]";
+	}
 	
 }

@@ -26,5 +26,10 @@ public class DateTimeField implements Field {
 		final long timestamp = longPredictionField.extract(prediction);
 		return new DateTime(timestamp);
 	}
+
+	@Override
+	public String toString() {
+		return getFieldName() + "/DateTimeField";
+	}
 	
 }

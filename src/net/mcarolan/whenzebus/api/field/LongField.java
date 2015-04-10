@@ -40,5 +40,10 @@ public class LongField implements Field {
 		
 		return longValue;
 	}
+
+	@Override
+	public String toString() {
+		return getFieldName() + "/LongField";
+	}
 	
 }
