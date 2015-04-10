@@ -7,41 +7,30 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 
 import android.util.Log;
-import net.mcarolan.whenzebus.api.predictionfield.Field;
-import net.mcarolan.whenzebus.api.predictionfield.Fields;
+import net.mcarolan.whenzebus.api.field.Field;
+import net.mcarolan.whenzebus.api.field.Fields;
 
 public class Client {
 	
 	private final String baseUri;
-	private final Set<? extends Field> fields;
-	private final StopCode1 stopCode1;
 	
 	private final String TAG = "PredictionClient";
 	
 	public static final Set<? extends Field> DEFAULT_PREDICTION_FIELDS = 
 			Sets.newHashSet(Fields.EstimatedTime, Fields.ExpireTime, Fields.DestinationText, Fields.LineName);
 	
-	public Client(String baseUri,
-			 StopCode1 stopCode1) {
-		this(baseUri, stopCode1, DEFAULT_PREDICTION_FIELDS);
-	}
-	
-	public Client(String baseUri,
-			 StopCode1 stopCode1, Set<? extends Field> fields) {
+	public Client(String baseUri) {
 		this.baseUri = baseUri;
-		this.fields = fields;
-		this.stopCode1 = stopCode1;
 	}
 	
-	public Set<Response> getPredictions() {
-		final Request predictionRequest = new Request(fields, stopCode1);
+	public Set<Response> getResponses(StopCode1 stopCode1, boolean stopInformation, Set<? extends Field> fields) {
+		final Request predictionRequest = new Request(fields, stopCode1, stopInformation);
 		final String uri = baseUri + predictionRequest.getURI();
 		final URL url;
 		
@@ -72,7 +61,12 @@ public class Client {
 				throw new IllegalStateException(message, e);
 			}
 			
-			if (responseCode != HttpURLConnection.HTTP_OK) {
+			if (responseCode == 416) {
+				final String message = "Unknown bus stop " + stopCode1.toString();
+				Log.e(TAG, message);
+				throw new UnknownBusStop(message);
+			}
+			else if (responseCode != HttpURLConnection.HTTP_OK) {
 				final String message = "Unexpected response code " + responseCode + " from " + uri;
 				Log.e(TAG, message);
 				throw new IllegalStateException(message);
@@ -98,9 +92,8 @@ public class Client {
 				throw new IllegalStateException(message, e);
 			}
 			
-
 			final ResponseParser predictionResponseParser = new ResponseParser(response);
-			return predictionResponseParser.extractPredictions(fields);
+			return predictionResponseParser.extractResponses(fields);
 		}
 		finally {
 			connection.disconnect();

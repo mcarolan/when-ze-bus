@@ -19,7 +19,7 @@ import com.google.common.collect.Lists;
 import net.mcarolan.whenzebus.TimeRemainingCalculator.TimeRemaining;
 import net.mcarolan.whenzebus.api.EstimatedTimeComparator;
 import net.mcarolan.whenzebus.api.Response;
-import net.mcarolan.whenzebus.api.predictionfield.Fields;
+import net.mcarolan.whenzebus.api.field.Fields;
 
 public class PredictionModelAdapter extends ArrayAdapter<PredictionModel> {
 	

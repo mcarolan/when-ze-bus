@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import net.mcarolan.whenzebus.api.predictionfield.Field;
-import net.mcarolan.whenzebus.api.predictionfield.FieldComparator;
+import net.mcarolan.whenzebus.api.field.Field;
+import net.mcarolan.whenzebus.api.field.FieldComparator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,15 +19,15 @@ import com.google.common.collect.Sets;
 
 public class ResponseParser {
 	
-	private final String predictionResponse;
+	private final String responseString;
 	
-	private static final String TAG = "PredictionResponseParser";
+	private static final String TAG = "ResponseParser";
 	
-	public ResponseParser(String predictionResponse) {
-		this.predictionResponse = predictionResponse;
+	public ResponseParser(String responseString) {
+		this.responseString = responseString;
 	}
 	
-	private boolean isPrediction(final JSONArray array, final Set<? extends Field> fields) {
+	public boolean isResponse(final JSONArray array, final Set<? extends Field> fields) {
 		final int expected = fields.size() + 1;
 		if (array.length() == expected) {
 			final int responseType;
@@ -37,7 +37,7 @@ public class ResponseParser {
 				Log.e(TAG, "Unable to check whether " + array.toString() + " is a prediction", e);
 				return false;
 			}
-			return responseType == 1;
+			return responseType == 1 || responseType == 0;
 		}
 		else {
 			Log.w(TAG, array.toString() + " was not a prediction, as its length was " + array.length() + " and a valid prediction for " + fields.toString() + " should have length " + fields);
@@ -45,8 +45,8 @@ public class ResponseParser {
 		}
 	}
 	
-	private Response parsePrediction(final JSONArray array, final Set<? extends Field> fields) {
-		if (!isPrediction(array, fields)) {
+	public Response parseResponse(final JSONArray array, final Set<? extends Field> fields) {
+		if (!isResponse(array, fields)) {
 			throw new IllegalStateException("Could not parse prediction for " + array.toString() + " as isPrediction returns false for " + fields.toString());
 		}
 		
@@ -73,9 +73,9 @@ public class ResponseParser {
 		return new Response(fieldToValue);
 	}
 	
-	public Set<Response> extractPredictions(final Set<? extends Field> fields) {
+	public Set<Response> extractResponses(final Set<? extends Field> fields) {
 		final Set<Response> predictions = Sets.newHashSet();
-		for (final String arrayString : Splitter.on('\n').split(predictionResponse)) {
+		for (final String arrayString : Splitter.on('\n').split(responseString)) {
 			final JSONArray jsonArray;
 			try {
 				jsonArray = new JSONArray(arrayString);
@@ -85,8 +85,8 @@ public class ResponseParser {
 				throw new IllegalStateException(message, e);
 			}
 			
-			if (isPrediction(jsonArray, fields)) {
-				predictions.add(parsePrediction(jsonArray, fields));
+			if (isResponse(jsonArray, fields)) {
+				predictions.add(parseResponse(jsonArray, fields));
 			}
 		}
 		return predictions;

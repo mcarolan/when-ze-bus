@@ -24,13 +24,13 @@ import android.widget.ListView;
 public class BusView extends ActionBarActivity {
 	
 	private final WhenZeBusDAL dal = new WhenZeBusDAL(this);
+    final Client client = new Client("http://countdown.api.tfl.gov.uk");
 	
 	class DisplayBusTimesTask extends AsyncTask<String, Void, Set<Response>> {
 
 		@Override
 		protected Set<Response> doInBackground(String... params) {
-	        final Client predictionClient = new Client("http://countdown.api.tfl.gov.uk", new StopCode1("76458"));
-			return predictionClient.getPredictions();
+			return client.getResponses(new StopCode1("76458"), true, Client.DEFAULT_PREDICTION_FIELDS);
 		}
 		
 		@Override
@@ -57,19 +57,27 @@ public class BusView extends ActionBarActivity {
 //        displayBusTimes.execute();
     }
 
+    
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+	protected boolean onPrepareOptionsPanel(View view, Menu menu) {
+    	menu.clear();
         getMenuInflater().inflate(R.menu.bus_view, menu);
+        
+        for (final BusStop busStop : dal.getBusStops()) {
+        	menu.add(Menu.NONE, Menu.NONE, 0, busStop.getStopPointName().getValue());
+        }
+        
         return true;
-    }
-
+	}
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_add) {
-        	final AddDialog addDialog = new AddDialog(this, dal);
+        	final AddDialog addDialog = new AddDialog(this, dal, client);
         	addDialog.show(getFragmentManager(), null);
+        	this.invalidateOptionsMenu();
         }
         return super.onOptionsItemSelected(item);
     }

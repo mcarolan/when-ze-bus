@@ -2,7 +2,7 @@ package net.mcarolan.whenzebus.api;
 
 import java.util.Map;
 
-import net.mcarolan.whenzebus.api.predictionfield.Field;
+import net.mcarolan.whenzebus.api.field.Field;
 
 import com.google.common.collect.ImmutableMap;
 

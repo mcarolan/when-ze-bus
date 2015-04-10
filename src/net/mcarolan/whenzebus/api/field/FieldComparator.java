@@ -1,4 +1,4 @@
-package net.mcarolan.whenzebus.api.predictionfield;
+package net.mcarolan.whenzebus.api.field;
 
 import java.util.Comparator;
 

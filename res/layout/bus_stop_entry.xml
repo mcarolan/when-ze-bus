@@ -23,5 +23,34 @@
 
         <requestFocus />
     </EditText>
+
+    <TextView
+        android:id="@+id/unknownBusStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Oops, couldn&apos;t find a bus stop with that SMS code"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:textColor="#FF0000" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/okButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK" />
+
+    </LinearLayout>
     
 </LinearLayout>

@@ -12,4 +12,9 @@ public class StopCode1 {
 		return value;
 	}
 
+	@Override
+	public String toString() {
+		return "StopCode1 [value=" + value + "]";
+	}
+	
 }

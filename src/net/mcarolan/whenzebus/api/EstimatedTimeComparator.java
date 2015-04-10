@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import org.joda.time.DateTime;
 
-import net.mcarolan.whenzebus.api.predictionfield.Fields;
+import net.mcarolan.whenzebus.api.field.Fields;
 
 public class EstimatedTimeComparator implements Comparator<Response> {
 

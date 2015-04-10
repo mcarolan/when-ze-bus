@@ -1,4 +1,4 @@
-package net.mcarolan.whenzebus.api.predictionfield;
+package net.mcarolan.whenzebus.api.field;
 
 
 import com.google.common.base.Function;

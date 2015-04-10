@@ -1,4 +1,4 @@
-package net.mcarolan.whenzebus.api.predictionfield;
+package net.mcarolan.whenzebus.api.field;
 
 public interface Field {
 	String getFieldName();

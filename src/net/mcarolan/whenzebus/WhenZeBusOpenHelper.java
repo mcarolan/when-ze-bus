@@ -15,7 +15,7 @@ public class WhenZeBusOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		
+		db.execSQL("create table busstop(stopcode1 varchar(255), stoppointname varchar(255))");
 	}
 
 	@Override
