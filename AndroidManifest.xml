@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="14"
         android:targetSdkVersion="21" />
 
     
@@ -15,7 +15,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name=".WhenZeBusApplication">
         <activity
             android:name=".BusView"
             android:label="@string/app_name" >
@@ -25,6 +26,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ManageStops"
+            android:label="@string/manage_stops" />
+        <activity
+            android:name=".AddView"
+            android:label="@string/add" />
     </application>
 
 </manifest>

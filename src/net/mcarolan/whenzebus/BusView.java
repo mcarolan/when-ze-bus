@@ -9,6 +9,7 @@ import net.mcarolan.whenzebus.api.Response;
 import net.mcarolan.whenzebus.api.Client;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,31 +34,60 @@ public class BusView extends ActionBarActivity {
     private BusStop selectedBusStop = null;
     Timer timer = null;
     
-    private static final long RESPONSE_REFRESH_MILLIS = TimeUnit.SECONDS.toMillis(5);
+    private static final long RESPONSE_REFRESH_MILLIS = TimeUnit.SECONDS.toMillis(30);
     private static final long LISTVIEW_REFRESH_MILLIS = 500;
+    
+    private class DisplayBusTimesResult {
+    	final boolean isSuccess;
+    	final Set<Response> responses;
+    	final Throwable error;
+    	
+		public DisplayBusTimesResult(boolean isSuccess, Set<Response> responses,
+				Throwable error) {
+			this.isSuccess = isSuccess;
+			this.responses = responses;
+			this.error = error;
+		}
+    }
 	
-	class DisplayBusTimesTask extends AsyncTask<String, Void, Set<Response>> {
+	class DisplayBusTimesTask extends AsyncTask<String, Void, DisplayBusTimesResult> {
 		
-		final BusStop busStop;
-
-		public DisplayBusTimesTask(BusStop busStop) {
-			this.busStop = busStop;
-		}
+		final BusStop busStop = selectedBusStop;
 
 		@Override
-		protected Set<Response> doInBackground(String... params) {
-			return client.getResponses(busStop.getStopCode1(), true, Client.DEFAULT_PREDICTION_FIELDS);
+		protected DisplayBusTimesResult doInBackground(String... params) {
+			try {
+				final Set<Response> responses = client.getResponses(busStop.getStopCode1(), true, Client.DEFAULT_PREDICTION_FIELDS);
+				return new DisplayBusTimesResult(true, responses, null);
+			}
+			catch (Exception e) {
+				Log.e(TAG, "Unable to get bus times", e);
+				return new DisplayBusTimesResult(false, null, e);
+			}
 		}
 		
 		@Override
-		protected void onPostExecute(Set<Response> result) {
+		protected void onPostExecute(DisplayBusTimesResult result) {
 			super.onPostExecute(result);
-			Log.i(TAG, "Received " + result.size() + " responses for " + busStop.getStopCode1());
-	        final ArrayAdapter<PredictionModel> arrayAdapter = new PredictionModelAdapter(BusView.this, result);
-	        final ListView listView = (ListView) findViewById(R.id.listview);
-	        listView.setAdapter(arrayAdapter);
-	        messageTextView.setVisibility(View.GONE);
-	        listView.setVisibility(View.VISIBLE);
+			if (result.isSuccess && result.responses.size() > 0) {
+				Log.i(TAG, "Received " + result.responses.size() + " responses for " + busStop.getStopCode1());
+		        final ArrayAdapter<PredictionModel> arrayAdapter = new PredictionModelAdapter(BusView.this, result.responses);
+		        final ListView listView = (ListView) findViewById(R.id.listview);
+		        listView.setAdapter(arrayAdapter);
+		        messageTextView.setVisibility(View.GONE);
+		        listView.setVisibility(View.VISIBLE);
+			}
+			else if (result.isSuccess) {
+				Log.i(TAG, "0 responses for " + busStop.getStopCode1());
+				messageTextView.setText(getResources().getString(R.string.busview_no_buses) + busStop.getStopPointName().getValue());
+				listView.setVisibility(View.GONE);
+				messageTextView.setVisibility(View.VISIBLE);
+			}
+			else {
+				messageTextView.setText(getResources().getString(R.string.busview_error));
+				listView.setVisibility(View.GONE);
+				messageTextView.setVisibility(View.VISIBLE);
+			}
 		}
 		
 	}
@@ -66,8 +96,8 @@ public class BusView extends ActionBarActivity {
 
 		@Override
 		public void run() {
-			if (selectedBusStop != null) {
-				new DisplayBusTimesTask(selectedBusStop).execute();	
+			if (selectedBusStop != null && WhenZeBusApplication.isInForeground()) {
+				new DisplayBusTimesTask().execute();	
 			}
 		}
 		
@@ -95,19 +125,39 @@ public class BusView extends ActionBarActivity {
 	
 	private void displayTimes(BusStop busStop) {
 		selectedBusStop = busStop;
-    	setTitle(busStop.getStopPointName().getValue());
-    	messageTextView.setVisibility(View.VISIBLE);
-    	listView.setVisibility(View.GONE);
-    	messageTextView.setText(getResources().getString(R.string.busview_loading));
         if (timer != null) {
         	timer.cancel();
         }
         timer = new Timer();
         timer.schedule(new RefreshTimesTask(), 0, RESPONSE_REFRESH_MILLIS);
 		timer.schedule(new RefreshListViewTask(), 0, LISTVIEW_REFRESH_MILLIS);
+		
+		final String stopPointName = busStop.getStopPointName().getValue();
+		setTitle(stopPointName);
+    	messageTextView.setVisibility(View.VISIBLE);
+    	listView.setVisibility(View.GONE);
+    	messageTextView.setText(getResources().getString(R.string.busview_loading_before) + stopPointName + getResources().getString(R.string.busview_loading_after));
 	}
-
+	
     @Override
+	protected void onPause() {
+    	super.onPause();
+    	Log.i(TAG, "stopping timer due to pause");
+		if (timer != null) {
+			timer.cancel();
+		}
+	}
+    
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	if (selectedBusStop != null) {
+    		Log.i(TAG, "dispaying times after pause");
+    		displayTimes(selectedBusStop);
+    	}
+    }
+
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bus_view);
@@ -136,9 +186,8 @@ public class BusView extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_add) {
-        	final AddDialog addDialog = new AddDialog(this, dal, client);
-        	addDialog.show(getFragmentManager(), null);
-        	this.invalidateOptionsMenu();
+        	final Intent intent = new Intent(this, ManageStops.class);
+        	this.startActivityForResult(intent, 0);
         }
         else if (item.getActionView().getTag() instanceof BusStop) {
         	final BusStop busStop = (BusStop) item.getActionView().getTag(); 
@@ -148,7 +197,12 @@ public class BusView extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
+    @Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+    	this.invalidateOptionsMenu();
+	}
+
+	/**
      * A placeholder fragment containing a simple view.
      */
     public class PlaceholderFragment extends Fragment {

@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="net.mcarolan.whenzebus.AddView$PlaceholderFragment" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:orientation="vertical" >
+        
+	            	<TextView
+	            	    android:layout_width="wrap_content"
+	            	    android:layout_height="wrap_content"
+	            	    android:layout_marginBottom="10dp"
+	            	    android:text="@string/add_typesmscode" />
+
+	            	<EditText
+	            	    android:id="@+id/smsCode"
+	            	    android:layout_width="match_parent"
+	            	    android:layout_height="wrap_content"
+	            	    android:layout_marginBottom="10dp"
+	            	    android:ems="10"
+	            	    android:inputType="number" >
+
+	            	    <requestFocus />
+	            	</EditText>
+
+	            	<TextView
+	            	    android:id="@+id/addErrorMessage"
+	            	    android:layout_width="wrap_content"
+	            	    android:layout_height="wrap_content"
+	            	    android:text="Error message"
+	            	    android:textColor="#FF0000"
+	            	    android:visibility="gone" />
+
+	            	<Button
+	            	    android:id="@+id/addButton"
+	            	    android:layout_width="fill_parent"
+	            	    android:layout_height="wrap_content"
+	            	    android:layout_gravity="bottom"
+	            	    android:text="@string/add_button" />
+	    
+    </LinearLayout>
+
+   </RelativeLayout>

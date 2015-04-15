@@ -25,7 +25,7 @@ public class WhenZeBusDAL {
 		final Cursor cursor = db.rawQuery("select * from busstop", new String[0]);
 		
 		cursor.moveToFirst();
-		
+
 		List<BusStop> busStops = Lists.newArrayList();
 		
 		while (!cursor.isAfterLast()) {
@@ -38,6 +38,33 @@ public class WhenZeBusDAL {
 		return busStops;
 	}
 	
+	public int countBusStopsWith(StopCode1 stopCode1) {
+		final SQLiteDatabase db = openHelper.getReadableDatabase();
+		final Cursor cursor = db.rawQuery("select * from busstop where stopcode1 = ?", new String[] { stopCode1.getValue() });
+		
+		cursor.moveToFirst();
+
+		int result = 0;
+		while (!cursor.isAfterLast()) {
+			++result;
+			cursor.moveToNext();
+		}
+		
+		return result;
+	}
+	
+	public void removeBusStop(StopCode1 stopCode1) {
+		SQLiteDatabase db = null;
+		try {
+			db = openHelper.getWritableDatabase();
+			db.delete("busstop", "stopcode1 = ?", new String[] { stopCode1.getValue() });
+		}
+		finally {
+			if (db != null) {
+				db.close();
+			}
+		}
+	}
 	public void addBusStop(StopCode1 stopCode1, StopPointName stopPointName) {
 		SQLiteDatabase db = null;
 		try {

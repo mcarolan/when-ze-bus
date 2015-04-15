@@ -6,7 +6,7 @@
     <item
         android:id="@+id/action_add"
         android:orderInCategory="100"
-        android:title="Add new"
+        android:title="Add/Remove Stops"
         app:showAsAction="never"/>
 
 </menu>

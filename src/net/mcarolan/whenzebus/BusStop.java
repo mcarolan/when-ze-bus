@@ -25,5 +25,38 @@ public class BusStop {
 	public String toString() {
 		return "BusStop [" + stopCode1 + ", " + stopPointName + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((stopCode1 == null) ? 0 : stopCode1.hashCode());
+		result = prime * result
+				+ ((stopPointName == null) ? 0 : stopPointName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BusStop other = (BusStop) obj;
+		if (stopCode1 == null) {
+			if (other.stopCode1 != null)
+				return false;
+		} else if (!stopCode1.equals(other.stopCode1))
+			return false;
+		if (stopPointName == null) {
+			if (other.stopPointName != null)
+				return false;
+		} else if (!stopPointName.equals(other.stopPointName))
+			return false;
+		return true;
+	}
 	
 }

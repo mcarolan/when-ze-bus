@@ -2,7 +2,10 @@
 <resources>
 
     <string name="app_name">When Ze Bus</string>
-	<string name="busview_loading">Loading...</string>
+	<string name="busview_loading_before">"Receiving predictions for "</string>
+	<string name="busview_loading_after">...</string>
+	<string name="busview_no_buses">"No buses are predicted to stop at "</string>
+	<string name="busview_error">Uh oh, we were unable to receive predictions. We\'ll keep trying, but please check your network connectivity.</string>
 	<string name="adddialog_invalid_response">Invalid response from bus information server. Please try again later.</string>
 	<string name="adddialog_bad_smscode">Couldn\'t find a bus stop with that SMS code.</string>
 	<string name="adddialog_could_not_communicate">There was a problem contacting the bus information server. Please try again later.</string>
@@ -12,4 +15,11 @@
 	<string name="time_manyminutes">" minutes and "</string>
 	<string name="time_onesecond">" second"</string>
 	<string name="time_manyseconds">" seconds"</string>
+	<string name="manage_delete">Remove</string>
+	<string name="manage_stops">Add/Remove Stops</string>
+	<string name="manage_no_bus_stops">No bus stops have been added</string>
+	<string name="add_typesmscode">Please enter the SMS code displayed on the bus stop:</string>
+	<string name="add_button">Add</string>
+	<string name="add">Add Bus Stop</string>
+	<string name="add_already_present">This bus stop has already been added</string>
 </resources>
