@@ -22,4 +22,6 @@
 	<string name="add_button">Add</string>
 	<string name="add">Add Bus Stop</string>
 	<string name="add_already_present">This bus stop has already been added</string>
+	<string name="add_button_pressed">Please wait...</string>
+	
 </resources>

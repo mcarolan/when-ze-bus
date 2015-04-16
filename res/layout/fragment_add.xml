@@ -23,11 +23,16 @@
 	            	    android:layout_height="wrap_content"
 	            	    android:layout_marginBottom="10dp"
 	            	    android:ems="10"
-	            	    android:inputType="number" >
+	            	    android:inputType="number">
 
 	            	    <requestFocus />
 	            	</EditText>
-
+	            	
+	            	<View
+	            	    android:layout_width="wrap_content"
+	            	    android:layout_height="wrap_content"
+	            	    android:layout_weight="1" />
+	            	
 	            	<TextView
 	            	    android:id="@+id/addErrorMessage"
 	            	    android:layout_width="wrap_content"
@@ -41,6 +46,7 @@
 	            	    android:layout_width="fill_parent"
 	            	    android:layout_height="wrap_content"
 	            	    android:layout_gravity="bottom"
+	            	    android:layout_weight="0"
 	            	    android:text="@string/add_button" />
 	    
     </LinearLayout>

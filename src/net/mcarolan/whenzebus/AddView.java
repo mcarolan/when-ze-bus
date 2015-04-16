@@ -26,6 +26,7 @@ public class AddView extends ActionBarActivity {
 	
 	private EditText smsCode;
 	private TextView addErrorMessage;
+	private Button addButton;
 	
 	private static final String TAG = "AddView";
 	
@@ -66,8 +67,8 @@ public class AddView extends ActionBarActivity {
 		protected void onPostExecute(LookupBusInformationResult result) {
 			if (result.isSuccess) {
 				if (result.responses.size() != 1) {
-					addErrorMessage.setText(getResources().getString(R.string.adddialog_invalid_response));
-					addErrorMessage.setVisibility(View.VISIBLE);
+					AddView.this.showError(getResources().getString(R.string.adddialog_invalid_response));
+					AddView.this.enableAddButton();
 				}
 				else {
 					final Response first = result.responses.iterator().next();
@@ -80,16 +81,32 @@ public class AddView extends ActionBarActivity {
 			else {
 				Log.e(TAG, "Could not look up bus information", result.error);
 				if (result.error instanceof UnknownBusStop) {
-					addErrorMessage.setText(getResources().getString(R.string.adddialog_bad_smscode));
-					addErrorMessage.setVisibility(View.VISIBLE);
+					AddView.this.showError(getResources().getString(R.string.adddialog_bad_smscode));
+					AddView.this.enableAddButton();
+					
 				}
 				else {
-					addErrorMessage.setText(getResources().getString(R.string.adddialog_could_not_communicate));
-					addErrorMessage.setVisibility(View.VISIBLE);
+					AddView.this.showError(getResources().getString(R.string.adddialog_could_not_communicate));
+					AddView.this.enableAddButton();
 				}
 			}
 		}
 		
+	}
+	
+	private void showError(String message) {
+		addErrorMessage.setText(message);
+		addErrorMessage.setVisibility(View.VISIBLE);
+	}
+	
+	private void enableAddButton() {
+		addButton.setEnabled(true);
+		addButton.setText(getResources().getString(R.string.add_button));
+	}
+	
+	private void disableAddButton() {
+		addButton.setEnabled(false);
+		addButton.setText(getResources().getString(R.string.add_button_pressed));
 	}
 	
 	private View.OnClickListener onAddClick = new View.OnClickListener() {
@@ -101,6 +118,7 @@ public class AddView extends ActionBarActivity {
 				addErrorMessage.setVisibility(View.VISIBLE);
 			}
 			else {
+				AddView.this.disableAddButton();
 				new LookupBusInformation().execute();
 			}
 		}
@@ -124,7 +142,7 @@ public class AddView extends ActionBarActivity {
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_add, container, false);
-			Button addButton = (Button) rootView.findViewById(R.id.addButton);
+			addButton = (Button) rootView.findViewById(R.id.addButton);
 			addButton.setOnClickListener(onAddClick);
 			smsCode = (EditText) rootView.findViewById(R.id.smsCode);
 			addErrorMessage = (TextView) rootView.findViewById(R.id.addErrorMessage);
