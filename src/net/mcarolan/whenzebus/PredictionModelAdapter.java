@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +60,9 @@ public class PredictionModelAdapter extends ArrayAdapter<PredictionModel> {
 		
 		destinationText.setText(item.getDestinationText());
 		lineName.setText(item.getLineName());
+		
+		lineName.setBackgroundColor(ColorGenerator.getBackgroundColorIntFor(item.getLineName()));
+		lineName.setTextColor(ColorGenerator.getForegroundColorIntFor(item.getLineName()));
 		
 		final TimeRemaining timeRemaining = calculator.getTimeRemaining(item.getEstimatedTime());
 		

@@ -11,16 +11,18 @@
 
         <TextView
             android:id="@+id/linename"
-            android:layout_width="85dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#FF0000"
             android:gravity="center"
             android:text="Line"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:padding="10dp" />
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
             android:orientation="vertical" >
 
             <TextView
