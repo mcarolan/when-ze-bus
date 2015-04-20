@@ -2,8 +2,7 @@ package net.mcarolan.whenzebus;
 
 import java.util.List;
 
-import net.mcarolan.whenzebus.api.StopCode1;
-import net.mcarolan.whenzebus.api.StopPointName;
+import net.mcarolan.whenzebus.api.value.*;
 
 import com.google.common.collect.Lists;
 
@@ -30,8 +29,12 @@ public class WhenZeBusDAL {
 		
 		while (!cursor.isAfterLast()) {
 			final String stopCode1 = cursor.getString(cursor.getColumnIndexOrThrow("stopcode1"));
+			final String stopPointIndicator = cursor.getString(cursor.getColumnIndexOrThrow("stoppointindicator"));
 			final String stopPointName = cursor.getString(cursor.getColumnIndexOrThrow("stoppointname"));
-			busStops.add(new BusStop(new StopCode1(stopCode1), new StopPointName(stopPointName)));
+			final String towards = cursor.getString(cursor.getColumnIndexOrThrow("towards"));
+			final double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow("latitude"));
+			final double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow("longitude"));
+			busStops.add(new BusStop(new StopCode1(stopCode1), new StopPointIndicator(stopPointIndicator), new StopPointName(stopPointName), new Towards(towards), new Location(new Latitude(latitude), new Longitude(longitude))));
 			cursor.moveToNext();
 		}
 		
@@ -65,14 +68,18 @@ public class WhenZeBusDAL {
 			}
 		}
 	}
-	public void addBusStop(StopCode1 stopCode1, StopPointName stopPointName) {
+	public void addBusStop(BusStop busStop) {
 		SQLiteDatabase db = null;
 		try {
 			db = openHelper.getWritableDatabase();
 			final ContentValues contentValues = new ContentValues();
 			
-			contentValues.put("stopcode1", stopCode1.getValue());
-			contentValues.put("stoppointname", stopPointName.getValue());
+			contentValues.put("stopcode1", busStop.getStopCode1().getValue());
+			contentValues.put("stoppointindicator", busStop.getStopPointIndicator().getValue());
+			contentValues.put("stoppointname", busStop.getStopPointName().getValue());
+			contentValues.put("towards", busStop.getTowards().getValue());
+			contentValues.put("latitude", busStop.getLocation().getLatitude().getValue());
+			contentValues.put("longitude", busStop.getLocation().getLongitude().getValue());
 			
 			db.insertOrThrow("busstop", null, contentValues);
 		} finally {

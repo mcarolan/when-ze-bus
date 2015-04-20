@@ -3,6 +3,7 @@ package net.mcarolan.whenzebus.adapter;
 import java.util.List;
 
 import net.mcarolan.whenzebus.BusStop;
+import net.mcarolan.whenzebus.ColorGenerator;
 import net.mcarolan.whenzebus.R;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -24,9 +25,16 @@ public class BusStopListAdapter extends ArrayAdapter<BusStop> {
 		final View rowView = inflater.inflate(R.layout.listitem_bus_stop, parent, false);
 		final BusStop item = getItem(position);
 		
-		final TextView busStopName = (TextView) rowView.findViewById(R.id.busStopName);
+		final TextView busStopName = (TextView) rowView.findViewById(R.id.stopPointName);
+		final TextView towards = (TextView) rowView.findViewById(R.id.towards);
+		final TextView stopPointIndicator = (TextView) rowView.findViewById(R.id.stopPointIndicator);
 		
 		busStopName.setText(item.getStopPointName().getValue());
+		towards.setText("Towards " + item.getTowards().getValue());
+		stopPointIndicator.setText(item.getStopPointIndicator().getValue());
+		
+		stopPointIndicator.setBackgroundColor(ColorGenerator.getBackgroundColorIntFor(item.getStopPointIndicator().getValue()));
+		stopPointIndicator.setTextColor(ColorGenerator.getForegroundColorIntFor(item.getStopPointIndicator().getValue()));
 		
 		return rowView;
 	}

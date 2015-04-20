@@ -1,20 +1,15 @@
-package net.mcarolan.whenzebus.api;
+package net.mcarolan.whenzebus.api.value;
 
-public class StopCode1 {
+abstract class StringValue {
 	
 	private final String value;
-	
-	public StopCode1(final String value) {
+
+	public StringValue(String value) {
 		this.value = value;
 	}
-	
+
 	public String getValue() {
 		return value;
-	}
-
-	@Override
-	public String toString() {
-		return "StopCode1 [value=" + value + "]";
 	}
 
 	@Override
@@ -33,7 +28,7 @@ public class StopCode1 {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		StopCode1 other = (StopCode1) obj;
+		StringValue other = (StringValue) obj;
 		if (value == null) {
 			if (other.value != null)
 				return false;
@@ -41,6 +36,10 @@ public class StopCode1 {
 			return false;
 		return true;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return value;
+	}
+
 }

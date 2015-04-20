@@ -51,6 +51,9 @@ public class ColorGenerator {
     };
 
 	public static int getBackgroundColorIntFor(String str) {
+		if (str == null || str.isEmpty()) {
+			return Color.parseColor(colors[0]);
+		}
 		final int index = str.hashCode() % colors.length;
 		return Color.parseColor(colors[index]);
 	}

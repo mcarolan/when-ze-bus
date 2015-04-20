@@ -2,12 +2,44 @@
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip" >
-
-    <TextView
-        android:id="@+id/busStopName"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center"
-        android:text="Blah" />
     
+    
+    <LinearLayout
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true">
+        
+    <TextView
+            android:id="@+id/stopPointIndicator"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#FF0000"
+            android:gravity="center"
+            android:text="D"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/stopPointName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Plough Road"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/towards"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Towards..."
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        </LinearLayout>
+   </LinearLayout>
 </RelativeLayout>

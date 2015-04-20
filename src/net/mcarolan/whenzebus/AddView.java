@@ -6,10 +6,10 @@ import com.google.common.collect.Sets;
 
 import net.mcarolan.whenzebus.api.Client;
 import net.mcarolan.whenzebus.api.Response;
-import net.mcarolan.whenzebus.api.StopCode1;
-import net.mcarolan.whenzebus.api.StopPointName;
 import net.mcarolan.whenzebus.api.UnknownBusStop;
 import net.mcarolan.whenzebus.api.field.Fields;
+import net.mcarolan.whenzebus.api.value.StopCode1;
+import net.mcarolan.whenzebus.api.value.StopPointName;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -55,7 +55,7 @@ public class AddView extends ActionBarActivity {
 		protected LookupBusInformationResult doInBackground(Void... params) {
 			try {
 				stopCode1 = new StopCode1(smsCode.getText().toString());
-				final Set<Response> result = client.getResponses(stopCode1, true, Sets.newHashSet(Fields.StopPointName));
+				final Set<Response> result = client.getResponses(stopCode1, true, Client.BUS_INFORMATION_FIELDS);
 				return new LookupBusInformationResult(null, result, true);
 			}
 			catch (Exception e) {
@@ -72,9 +72,8 @@ public class AddView extends ActionBarActivity {
 				}
 				else {
 					final Response first = result.responses.iterator().next();
-					final String stopPointName = Fields.StopPointName.extract(first);
-					Log.i(TAG, "StopPointName " + stopPointName);
-					dal.addBusStop(stopCode1,  new StopPointName(stopPointName));
+					Log.i(TAG, "Response =  " + first.toString());
+					dal.addBusStop(BusStop.fromResponse(first));
 					AddView.this.finish();
 				}
 			}

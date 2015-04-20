@@ -6,6 +6,7 @@ import java.util.Set;
 import net.mcarolan.whenzebus.api.field.Field;
 import net.mcarolan.whenzebus.api.field.FieldName;
 import net.mcarolan.whenzebus.api.field.Fields;
+import net.mcarolan.whenzebus.api.value.StopCode1;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;

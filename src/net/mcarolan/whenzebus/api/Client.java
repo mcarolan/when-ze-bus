@@ -15,6 +15,7 @@ import com.google.common.io.CharStreams;
 import android.util.Log;
 import net.mcarolan.whenzebus.api.field.Field;
 import net.mcarolan.whenzebus.api.field.Fields;
+import net.mcarolan.whenzebus.api.value.StopCode1;
 
 public class Client {
 	
@@ -24,6 +25,9 @@ public class Client {
 	
 	public static final Set<? extends Field> DEFAULT_PREDICTION_FIELDS = 
 			Sets.newHashSet(Fields.EstimatedTime, Fields.ExpireTime, Fields.DestinationText, Fields.LineName);
+	
+	public static final Set<? extends Field> BUS_INFORMATION_FIELDS =
+			Sets.newHashSet(Fields.StopPointIndicator, Fields.StopPointName, Fields.StopCode1, Fields.Towards, Fields.Latitude, Fields.Longitude);
 	
 	public Client(String baseUri) {
 		this.baseUri = baseUri;
