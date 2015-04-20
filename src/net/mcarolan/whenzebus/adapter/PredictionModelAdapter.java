@@ -1,4 +1,4 @@
-package net.mcarolan.whenzebus;
+package net.mcarolan.whenzebus.adapter;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +16,13 @@ import android.widget.TextView;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
+import net.mcarolan.whenzebus.ColorGenerator;
+import net.mcarolan.whenzebus.PredictionModel;
+import net.mcarolan.whenzebus.R;
+import net.mcarolan.whenzebus.TimeRemainingCalculator;
+import net.mcarolan.whenzebus.R.id;
+import net.mcarolan.whenzebus.R.layout;
+import net.mcarolan.whenzebus.R.string;
 import net.mcarolan.whenzebus.TimeRemainingCalculator.TimeRemaining;
 import net.mcarolan.whenzebus.api.EstimatedTimeComparator;
 import net.mcarolan.whenzebus.api.Response;

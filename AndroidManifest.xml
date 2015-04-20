@@ -18,14 +18,16 @@
         android:theme="@style/AppTheme"
         android:name=".WhenZeBusApplication">
         <activity
-            android:name=".BusView"
-            android:label="@string/app_name" >
+            android:name=".BusView" />
+        <activity
+            android:name=".BusStopView"
+            android:label="@string/busstoplist_selectstop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+            </activity>
         <activity
             android:name=".ManageStops"
             android:label="@string/manage_stops" />

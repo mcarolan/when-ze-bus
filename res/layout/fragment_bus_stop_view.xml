@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    tools:context="net.mcarolan.whenzebus.BusStopListView$PlaceholderFragment" >
+
+    <LinearLayout
+        android:id="@+id/layoutBusStops"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/busStopListView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="3"
+            android:longClickable="true" />
+
+        <Button
+            android:id="@+id/addRemoveBusStop"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/busStopListView"
+            android:layout_weight="1"
+            android:text="@string/busstoplist_add" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutNoBusStops"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You don&apos;t have any bus stops added yet" />
+        
+	    <Button
+	        android:id="@+id/noStopsAdd"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Add bus stop" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -5,17 +5,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import net.mcarolan.whenzebus.adapter.PredictionModelAdapter;
 import net.mcarolan.whenzebus.api.Response;
 import net.mcarolan.whenzebus.api.Client;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -25,7 +23,6 @@ import android.widget.TextView;
 public class BusView extends ActionBarActivity {
 	
 	private static final String TAG = "BusView";
-	private final WhenZeBusDAL dal = new WhenZeBusDAL(this);
     final Client client = new Client("http://countdown.api.tfl.gov.uk");
     
     private TextView messageTextView;
@@ -123,8 +120,7 @@ public class BusView extends ActionBarActivity {
 		
 	}
 	
-	private void displayTimes(BusStop busStop) {
-		selectedBusStop = busStop;
+	private void displayTimes() {
         if (timer != null) {
         	timer.cancel();
         }
@@ -132,7 +128,7 @@ public class BusView extends ActionBarActivity {
         timer.schedule(new RefreshTimesTask(), 0, RESPONSE_REFRESH_MILLIS);
 		timer.schedule(new RefreshListViewTask(), 0, LISTVIEW_REFRESH_MILLIS);
 		
-		final String stopPointName = busStop.getStopPointName().getValue();
+		final String stopPointName = selectedBusStop.getStopPointName().getValue();
 		setTitle(stopPointName);
     	messageTextView.setVisibility(View.VISIBLE);
     	listView.setVisibility(View.GONE);
@@ -151,15 +147,13 @@ public class BusView extends ActionBarActivity {
     @Override
     protected void onResume() {
     	super.onResume();
-    	if (selectedBusStop != null) {
-    		Log.i(TAG, "dispaying times after pause");
-    		displayTimes(selectedBusStop);
-    	}
+    	displayTimes();
     }
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        selectedBusStop = BusStop.readFrom(getIntent());
         setContentView(R.layout.activity_bus_view);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -167,40 +161,6 @@ public class BusView extends ActionBarActivity {
                     .commit();
         }
     }
-
-    @Override
-	protected boolean onPrepareOptionsPanel(View view, Menu menu) {
-    	menu.clear();
-        getMenuInflater().inflate(R.menu.bus_view, menu);
-        
-        for (final BusStop busStop : dal.getBusStops()) {
-        	final MenuItem menuItem = menu.add(Menu.NONE, Menu.NONE, 0, busStop.getStopPointName().getValue());
-        	menuItem.setActionView(new View(this));
-        	menuItem.getActionView().setTag(busStop);
-        }
-        
-        return true;
-	}
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_add) {
-        	final Intent intent = new Intent(this, ManageStops.class);
-        	this.startActivityForResult(intent, 0);
-        }
-        else if (item.getActionView().getTag() instanceof BusStop) {
-        	final BusStop busStop = (BusStop) item.getActionView().getTag(); 
-        	Log.i(TAG, "displaying information for " + busStop.toString());
-        	displayTimes(busStop);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
-    	this.invalidateOptionsMenu();
-	}
 
 	/**
      * A placeholder fragment containing a simple view.
@@ -216,6 +176,7 @@ public class BusView extends ActionBarActivity {
             View rootView = inflater.inflate(R.layout.fragment_bus_view, container, false);
             messageTextView = (TextView) rootView.findViewById(R.id.message);
             listView = (ListView) rootView.findViewById(R.id.listview);
+            BusView.this.displayTimes();
             return rootView;
         }
     }

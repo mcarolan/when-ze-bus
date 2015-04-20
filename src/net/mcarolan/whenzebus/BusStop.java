@@ -1,5 +1,6 @@
 package net.mcarolan.whenzebus;
 
+import android.content.Intent;
 import net.mcarolan.whenzebus.api.StopCode1;
 import net.mcarolan.whenzebus.api.StopPointName;
 
@@ -19,6 +20,17 @@ public class BusStop {
 	
 	public StopPointName getStopPointName() {
 		return stopPointName;
+	}
+	
+	public void writeTo(Intent intent) {
+		intent.putExtra("stopcode1", stopCode1.getValue());
+		intent.putExtra("stoppointname", stopPointName.getValue());
+	}
+	
+	public static BusStop readFrom(Intent intent) {
+		final String stopCode1 = intent.getStringExtra("stopcode1");
+		final String stopPointName = intent.getStringExtra("stoppointname");
+		return new BusStop(new StopCode1(stopCode1), new StopPointName(stopPointName));
 	}
 
 	@Override
