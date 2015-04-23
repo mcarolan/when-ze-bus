@@ -54,34 +54,50 @@ public class PredictionModelAdapter extends ArrayAdapter<PredictionModel> {
 		
 	};
 
+	static class ViewHolder {
+		TextView destinationText;
+		TextView lineName;
+		TextView estimatedTime;
+	}
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		final LayoutInflater inflater = (LayoutInflater) getContext()
-		        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		final View rowView = inflater.inflate(R.layout.listitem, parent, false);
+		ViewHolder viewHolder;
+
+		if (convertView == null) {
+			final LayoutInflater inflater = (LayoutInflater) getContext()
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = inflater.inflate(R.layout.listitem, parent, false);
+
+			viewHolder = new ViewHolder();
+			viewHolder.destinationText = (TextView) convertView.findViewById(R.id.destinationtext);
+			viewHolder.lineName = (TextView) convertView.findViewById(R.id.linename);
+			viewHolder.estimatedTime = (TextView) convertView.findViewById(R.id.estimatedtime);
+
+			convertView.setTag(viewHolder);
+		}
+		else {
+			viewHolder = (ViewHolder) convertView.getTag();
+		}
 		final PredictionModel item = getItem(position);
 		
-		final TextView destinationText = (TextView) rowView.findViewById(R.id.destinationtext);
-		final TextView lineName = (TextView) rowView.findViewById(R.id.linename);
-		final TextView estimatedTime = (TextView) rowView.findViewById(R.id.estimatedtime);
-		
-		destinationText.setText(item.getDestinationText());
-		lineName.setText(item.getLineName());
-		
-		lineName.setBackgroundColor(ColorGenerator.getBackgroundColorIntFor(item.getLineName()));
-		lineName.setTextColor(ColorGenerator.getForegroundColorIntFor(item.getLineName()));
+		viewHolder.destinationText.setText(item.getDestinationText());
+		viewHolder.lineName.setText(item.getLineName());
+
+		viewHolder.lineName.setBackgroundColor(ColorGenerator.getBackgroundColorIntFor(item.getLineName()));
+		viewHolder.lineName.setTextColor(ColorGenerator.getForegroundColorIntFor(item.getLineName()));
 		
 		final TimeRemaining timeRemaining = calculator.getTimeRemaining(item.getEstimatedTime());
 		
 		
 		if (timeRemaining.isInPast()) {
-			estimatedTime.setText(rowView.getResources().getString(R.string.prediction_due));
+			viewHolder.estimatedTime.setText(convertView.getResources().getString(R.string.prediction_due));
 		}
 		else {
-			estimatedTime.setText(rowView.getResources().getString(R.string.prediction_duein) + timeRemaining.getTimeRemainingString());
+			viewHolder.estimatedTime.setText(convertView.getResources().getString(R.string.prediction_duein) + timeRemaining.getTimeRemainingString());
 		}
 		
-		return rowView;
+		return convertView;
 	}
 
 }

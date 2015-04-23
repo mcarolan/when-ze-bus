@@ -162,9 +162,6 @@ public class BusView extends ActionBarActivity {
         }
     }
 
-	/**
-     * A placeholder fragment containing a simple view.
-     */
     public class PlaceholderFragment extends Fragment {
 
         public PlaceholderFragment() {

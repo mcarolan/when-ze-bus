@@ -3,11 +3,6 @@
     package="net.mcarolan.whenzebus"
     android:versionCode="1"
     android:versionName="1.0" >
-
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="21" />
-
     
     <uses-permission android:name="android.permission.INTERNET" />
     
@@ -28,9 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             </activity>
-        <activity
-            android:name=".ManageStops"
-            android:label="@string/manage_stops" />
         <activity
             android:name=".AddView"
             android:label="@string/add" />

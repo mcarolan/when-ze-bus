@@ -112,8 +112,8 @@ public class BusStopView extends ActionBarActivity {
 		}
 		
 	}
-	
-	private class PlaceholderFragment extends Fragment {
+
+	public class PlaceholderFragment extends Fragment {
 		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,

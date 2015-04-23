@@ -24,14 +24,14 @@ import android.widget.TextView;
 
 public class AddView extends ActionBarActivity {
 	
+	private static final String TAG = "AddView";
+
+	private Button addButton;
 	private EditText smsCode;
 	private TextView addErrorMessage;
-	private Button addButton;
-	
-	private static final String TAG = "AddView";
 	
 	private final WhenZeBusDAL dal = new WhenZeBusDAL(this);
-    final Client client = new Client("http://countdown.api.tfl.gov.uk");
+	private final Client client = new Client("http://countdown.api.tfl.gov.uk");
 	
 	private class LookupBusInformationResult {
 		private final Throwable error;
@@ -134,8 +134,8 @@ public class AddView extends ActionBarActivity {
                     .commit();
         }
 	}
-	
-	private class PlaceholderFragment extends Fragment {
+
+	public class PlaceholderFragment extends Fragment {
 		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,

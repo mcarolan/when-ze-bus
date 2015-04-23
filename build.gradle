@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.11.1'
+    }
+}
+
+apply plugin: 'android'
+
+repositories {
+	mavenCentral()
+} 
+
+android {
+
+	compileSdkVersion 22
+
+	buildToolsVersion "22.0.1"
+
+	defaultConfig {
+		minSdkVersion 14
+
+		targetSdkVersion 22
+	}
+
+}
+
+dependencies {
+	compile 'com.android.support:appcompat-v7:22.+'
+	compile 'com.google.guava:guava:18.0'
+	compile 'joda-time:joda-time:2.7'
+}
+
+
+
+
