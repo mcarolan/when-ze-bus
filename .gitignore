@@ -11,3 +11,4 @@ bin/*
 gen/*
 build/*
 .gradle/*
+*.swp

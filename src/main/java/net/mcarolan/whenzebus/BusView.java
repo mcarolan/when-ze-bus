@@ -23,18 +23,14 @@ import android.widget.TextView;
 public class BusView extends ActionBarActivity {
 	
 	private static final String TAG = "BusView";
-    final Client client = new Client("http://countdown.api.tfl.gov.uk");
-    
-    private TextView messageTextView;
-    private ListView listView;
-    
-    private BusStop selectedBusStop = null;
-    Timer timer = null;
+	private static final Client client = new Client("http://countdown.api.tfl.gov.uk");
+        
+	private static BusStop selectedBusStop = null;
     
     private static final long RESPONSE_REFRESH_MILLIS = TimeUnit.SECONDS.toMillis(30);
     private static final long LISTVIEW_REFRESH_MILLIS = 500;
     
-    private class DisplayBusTimesResult {
+    private static class DisplayBusTimesResult {
     	final boolean isSuccess;
     	final Set<Response> responses;
     	final Throwable error;
@@ -47,14 +43,69 @@ public class BusView extends ActionBarActivity {
 		}
     }
 	
+    @Override
+	protected void onPause() {
+		super.onPause();
+		Log.i(TAG, "stopping timer due to pause");
+		final BusViewFragment fragment = (BusViewFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+		fragment.clearTimer();
+	}
+    
+    @Override
+    protected void onResume() {
+    	super.onResume();
+	final BusViewFragment fragment = (BusViewFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+    	fragment.displayTimes();
+    }
+
+	@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        selectedBusStop = BusStop.readFrom(getIntent());
+        setContentView(R.layout.activity_bus_view);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new BusViewFragment())
+                    .commit();
+        }
+    }
+
+    public static class BusViewFragment extends Fragment {
+	private Timer timer = null;
+
+	private void clearTimer() {
+		if (timer != null) {
+			timer.cancel();
+		}
+		timer = null;
+	}
+
+	class RefreshListViewTask extends TimerTask {
+
+		@Override
+		public void run() {
+			getActivity().runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					final ListView listview = (ListView) getActivity().findViewById(R.id.listview);
+					if (listview.getAdapter() != null) {
+						final PredictionModelAdapter adapter = (PredictionModelAdapter) listview.getAdapter();
+						adapter.notifyDataSetChanged();
+					}
+				}
+				
+			});
+		}
+		
+	}
+		
 	class DisplayBusTimesTask extends AsyncTask<String, Void, DisplayBusTimesResult> {
 		
-		final BusStop busStop = selectedBusStop;
-
 		@Override
 		protected DisplayBusTimesResult doInBackground(String... params) {
 			try {
-				final Set<Response> responses = client.getResponses(busStop.getStopCode1(), true, Client.DEFAULT_PREDICTION_FIELDS);
+				final Set<Response> responses = client.getResponses(selectedBusStop.getStopCode1(), true, Client.DEFAULT_PREDICTION_FIELDS);
 				return new DisplayBusTimesResult(true, responses, null);
 			}
 			catch (Exception e) {
@@ -66,17 +117,19 @@ public class BusView extends ActionBarActivity {
 		@Override
 		protected void onPostExecute(DisplayBusTimesResult result) {
 			super.onPostExecute(result);
+			final ListView listView = (ListView) getActivity().findViewById(R.id.listview);
+			final TextView messageTextView = (TextView) getActivity().findViewById(R.id.message);
+
 			if (result.isSuccess && result.responses.size() > 0) {
-				Log.i(TAG, "Received " + result.responses.size() + " responses for " + busStop.getStopCode1());
-		        final ArrayAdapter<PredictionModel> arrayAdapter = new PredictionModelAdapter(BusView.this, result.responses);
-		        final ListView listView = (ListView) findViewById(R.id.listview);
-		        listView.setAdapter(arrayAdapter);
-		        messageTextView.setVisibility(View.GONE);
-		        listView.setVisibility(View.VISIBLE);
+				Log.i(TAG, "Received " + result.responses.size() + " responses for " + selectedBusStop.getStopCode1());
+				final ArrayAdapter<PredictionModel> arrayAdapter = new PredictionModelAdapter(getActivity(), result.responses);
+				listView.setAdapter(arrayAdapter);
+				messageTextView.setVisibility(View.GONE);
+				listView.setVisibility(View.VISIBLE);
 			}
 			else if (result.isSuccess) {
-				Log.i(TAG, "0 responses for " + busStop.getStopCode1());
-				messageTextView.setText(getResources().getString(R.string.busview_no_buses) + busStop.getStopPointName().getValue());
+				Log.i(TAG, "0 responses for " + selectedBusStop.getStopCode1());
+				messageTextView.setText(getResources().getString(R.string.busview_no_buses) + selectedBusStop.getStopPointName().getValue());
 				listView.setVisibility(View.GONE);
 				messageTextView.setVisibility(View.VISIBLE);
 			}
@@ -88,92 +141,41 @@ public class BusView extends ActionBarActivity {
 		}
 		
 	}
-	
+
 	class RefreshTimesTask extends TimerTask {
 
 		@Override
 		public void run() {
-			if (selectedBusStop != null && WhenZeBusApplication.isInForeground()) {
+			if (WhenZeBusApplication.isInForeground()) {
 				new DisplayBusTimesTask().execute();	
 			}
 		}
-		
-	}
-	
-	class RefreshListViewTask extends TimerTask {
 
-		@Override
-		public void run() {
-			final ActionBarActivity that = BusView.this;
-			that.runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					if (listView.getAdapter() != null) {
-						final PredictionModelAdapter adapter = (PredictionModelAdapter) listView.getAdapter();
-						adapter.notifyDataSetChanged();
-					}
-				}
-				
-			});
-		}
-		
 	}
-	
+
 	private void displayTimes() {
-        if (timer != null) {
-        	timer.cancel();
-        }
-        timer = new Timer();
-        timer.schedule(new RefreshTimesTask(), 0, RESPONSE_REFRESH_MILLIS);
-		timer.schedule(new RefreshListViewTask(), 0, LISTVIEW_REFRESH_MILLIS);
-		
-		final String stopPointName = selectedBusStop.getStopPointName().getValue();
-		setTitle(stopPointName);
-    	messageTextView.setVisibility(View.VISIBLE);
-    	listView.setVisibility(View.GONE);
-    	messageTextView.setText(getResources().getString(R.string.busview_loading_before) + stopPointName + getResources().getString(R.string.busview_loading_after));
-	}
-	
-    @Override
-	protected void onPause() {
-    	super.onPause();
-    	Log.i(TAG, "stopping timer due to pause");
 		if (timer != null) {
 			timer.cancel();
 		}
+		timer = new Timer();
+		timer.schedule(new RefreshTimesTask(), 0, RESPONSE_REFRESH_MILLIS);
+		timer.schedule(new RefreshListViewTask(), 0, LISTVIEW_REFRESH_MILLIS);
+		
+		final String stopPointName = selectedBusStop.getStopPointName().getValue();
+		getActivity().setTitle(stopPointName);
+		final TextView messageTextView = (TextView) getActivity().findViewById(R.id.message);
+		final ListView listview = (ListView) getActivity().findViewById(R.id.listview);
+
+		messageTextView.setVisibility(View.VISIBLE);
+		listview.setVisibility(View.GONE);
+		messageTextView.setText(getResources().getString(R.string.busview_loading_before) + stopPointName + getResources().getString(R.string.busview_loading_after));
 	}
-    
-    @Override
-    protected void onResume() {
-    	super.onResume();
-    	displayTimes();
-    }
-
-	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        selectedBusStop = BusStop.readFrom(getIntent());
-        setContentView(R.layout.activity_bus_view);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
-    }
-
-    public class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_bus_view, container, false);
-            messageTextView = (TextView) rootView.findViewById(R.id.message);
-            listView = (ListView) rootView.findViewById(R.id.listview);
-            BusView.this.displayTimes();
+            displayTimes();
             return rootView;
         }
     }

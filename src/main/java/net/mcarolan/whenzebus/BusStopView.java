@@ -25,10 +25,6 @@ import android.widget.ListView;
 
 public class BusStopView extends ActionBarActivity {
 	
-	private final WhenZeBusDAL dal = new WhenZeBusDAL(this);
-	private ListView listview;
-	private View layoutBusStops;
-	private View layoutNoBusStops;
 	private static final String TAG = "BusStopView";
 	
 	@Override
@@ -37,99 +33,107 @@ public class BusStopView extends ActionBarActivity {
         setContentView(R.layout.activity_busstopview);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.busStopViewContainer, new PlaceholderFragment())
+                    .add(R.id.busStopViewContainer, new BusStopViewFragment())
                     .commit();
         }
 	}
-	
-	private final AdapterView.OnItemClickListener itemClick = new AdapterView.OnItemClickListener() {
 
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
-			final BusStop item = (BusStop) parent.getItemAtPosition(position);
-			final Intent intent = new Intent(BusStopView.this, BusView.class);
-			item.writeTo(intent);
-			BusStopView.this.startActivity(intent);
-		}
-		
-	};
-	
-	private final AdapterView.OnItemLongClickListener longPress = new AdapterView.OnItemLongClickListener() {
-
-		@Override
-		public boolean onItemLongClick(AdapterView<?> parent, View view,
-				int position, long id) {
-			final BusStop busStop = (BusStop) listview.getItemAtPosition(position);
-			new AlertDialog.Builder(BusStopView.this)
-	        .setIcon(android.R.drawable.ic_dialog_alert)
-	        .setTitle("Remove " + busStop.getStopPointName().getValue())
-	        .setMessage("Would you like to remove " + busStop.getStopPointName().getValue() + " ?")
-	        .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dal.removeBusStop(busStop.getStopCode1());
-					BusStopView.this.loadBusStops();
-				}
-				
-			})
-	        .setNegativeButton("Cancel", null)
-	        .show();
-			return true;
-		}
-		
-	};
-	
-	private final OnClickListener onAddClick = new OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			final Intent intent = new Intent(BusStopView.this, AddView.class);
-			BusStopView.this.startActivityForResult(intent, 0);
-		}
-		
-	};
-	
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		super.onActivityResult(arg0, arg1, arg2);
-		loadBusStops();
+		BusStopViewFragment fragment = (BusStopViewFragment) getSupportFragmentManager().findFragmentById(R.id.busStopViewContainer);
+		fragment.loadBusStops();
 	}
 
-	private void loadBusStops() {
-		final List<BusStop> stops = dal.getBusStops();
-		
-		if (stops.isEmpty()) {
-			layoutBusStops.setVisibility(View.GONE);
-			layoutNoBusStops.setVisibility(View.VISIBLE);
-		}
-		else {
-			final BusStopListAdapter adapter = new BusStopListAdapter(BusStopView.this, stops);
-			listview.setAdapter(adapter);
-			layoutBusStops.setVisibility(View.VISIBLE);
-			layoutNoBusStops.setVisibility(View.GONE);
-		}
-		
-	}
 
-	public class PlaceholderFragment extends Fragment {
+	public static class BusStopViewFragment extends Fragment {
+	
+		private void loadBusStops() {
+			final WhenZeBusDAL dal = new WhenZeBusDAL(getActivity());
+			final List<BusStop> stops = dal.getBusStops();
+			
+			final View layoutBusStops = getActivity().findViewById(R.id.layoutBusStops);
+			final View layoutNoBusStops = getActivity().findViewById(R.id.layoutNoBusStops);
+			final ListView listview = (ListView) getActivity().findViewById(R.id.busStopListView);
+
+			if (stops.isEmpty()) {
+				layoutBusStops.setVisibility(View.GONE);
+				layoutNoBusStops.setVisibility(View.VISIBLE);
+			}
+			else {
+				final BusStopListAdapter adapter = new BusStopListAdapter(getActivity(), stops);
+				listview.setAdapter(adapter);
+				layoutBusStops.setVisibility(View.VISIBLE);
+				layoutNoBusStops.setVisibility(View.GONE);
+			}
+		}	
+
 		
+		private final AdapterView.OnItemClickListener itemClick = new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				final BusStop item = (BusStop) parent.getItemAtPosition(position);
+				final Intent intent = new Intent(getActivity(), BusView.class);
+				item.writeTo(intent);
+				getActivity().startActivity(intent);
+			}
+			
+		};
+		
+		private final AdapterView.OnItemLongClickListener longPress = new AdapterView.OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				final WhenZeBusDAL dal = new WhenZeBusDAL(getActivity());
+				final BusStop busStop = (BusStop) parent.getItemAtPosition(position);
+				new AlertDialog.Builder(getActivity())
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setTitle("Remove " + busStop.getStopPointName().getValue())
+			.setMessage("Would you like to remove " + busStop.getStopPointName().getValue() + " ?")
+			.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dal.removeBusStop(busStop.getStopCode1());
+						loadBusStops();
+					}
+					
+				})
+			.setNegativeButton("Cancel", null)
+			.show();
+				return true;
+			}
+			
+		};
+		
+		private final OnClickListener onAddClick = new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				final Intent intent = new Intent(getActivity(), AddView.class);
+				getActivity().startActivityForResult(intent, 0);
+			}
+			
+		};
+	
+
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_bus_stop_view, container, false);
-			listview = (ListView) rootView.findViewById(R.id.busStopListView);
 			final Button add = (Button) rootView.findViewById(R.id.addRemoveBusStop);
 			final Button noStopsAdd = (Button) rootView.findViewById(R.id.noStopsAdd);
-			layoutBusStops = rootView.findViewById(R.id.layoutBusStops);
-			layoutNoBusStops = rootView.findViewById(R.id.layoutNoBusStops);
+			final ListView listview = (ListView) rootView.findViewById(R.id.busStopListView);
 			add.setOnClickListener(onAddClick);
 			noStopsAdd.setOnClickListener(onAddClick);
 			listview.setOnItemClickListener(itemClick);
 			listview.setOnItemLongClickListener(longPress);
-			BusStopView.this.loadBusStops();
-			BusStopView.this.registerForContextMenu(listview);
+			
+			loadBusStops();
+			getActivity().registerForContextMenu(listview);
 			return rootView;
 		}
 		
