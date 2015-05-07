@@ -118,7 +118,12 @@ public class BusStopView extends ActionBarActivity {
 			}
 			
 		};
-	
+
+		@Override
+		public void onStart() {
+			super.onStart();
+			loadBusStops();
+		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,7 +137,6 @@ public class BusStopView extends ActionBarActivity {
 			listview.setOnItemClickListener(itemClick);
 			listview.setOnItemLongClickListener(longPress);
 			
-			loadBusStops();
 			getActivity().registerForContextMenu(listview);
 			return rootView;
 		}

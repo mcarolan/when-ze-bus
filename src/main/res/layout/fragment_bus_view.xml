@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/activity_margin"
-    tools:context="net.mcarolan.whenzebus.BusView$PlaceholderFragment" >
+    tools:context="net.mcarolan.whenzebus.BusView$BusViewFragment" >
 
     <ListView
 	    android:id="@+id/listview"

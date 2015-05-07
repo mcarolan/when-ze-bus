@@ -175,7 +175,6 @@ public class BusView extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_bus_view, container, false);
-            displayTimes();
             return rootView;
         }
     }
