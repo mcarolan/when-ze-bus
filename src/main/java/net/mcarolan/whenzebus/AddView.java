@@ -2,6 +2,7 @@ package net.mcarolan.whenzebus;
 
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import net.mcarolan.whenzebus.api.Client;
@@ -27,20 +28,6 @@ public class AddView extends ActionBarActivity {
 	private static final String TAG = "AddView";
 
 	private static final Client client = new Client("http://countdown.api.tfl.gov.uk");
-	
-	private static class LookupBusInformationResult {
-		private final Throwable error;
-		private final Set<Response> responses;
-		private final boolean isSuccess;
-		
-		public LookupBusInformationResult(Throwable error,
-				Set<Response> responses, boolean isSuccess) {
-			this.error = error;
-			this.responses = responses;
-			this.isSuccess = isSuccess;
-		}
-		
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,32 +42,32 @@ public class AddView extends ActionBarActivity {
 
 	public static class AddFragment extends Fragment {
 		
-		private class LookupBusInformation extends AsyncTask<Void, Void, LookupBusInformationResult> {
+		private class LookupBusInformation extends AsyncTask<Void, Void, ClientResult> {
 		
 			private StopCode1 stopCode1;
 
 			@Override
-			protected LookupBusInformationResult doInBackground(Void... params) {
+			protected ClientResult doInBackground(Void... params) {
 				try {
 					stopCode1 = new StopCode1(getSmsCode().getText().toString());
 					final Set<Response> result = client.getResponses(stopCode1, true, Client.BUS_INFORMATION_FIELDS);
-					return new LookupBusInformationResult(null, result, true);
+					return new ClientResult(true, result, null);
 				}
 				catch (Exception e) {
-					return new LookupBusInformationResult(e, null, false);
+					return new ClientResult(false, Sets.<Response>newHashSet(), e);
 				}
 			}
 
 			@Override
-			protected void onPostExecute(LookupBusInformationResult result) {
-				if (result.isSuccess) {
-					if (result.responses.size() != 1) {
+			protected void onPostExecute(ClientResult result) {
+				if (result.isSuccess()) {
+					if (result.getResponses().size() != 1) {
 						showError(getResources().getString(R.string.adddialog_invalid_response));
 						enableAddButton();
 					}
 					else {
 						final WhenZeBusDAL dal = new WhenZeBusDAL(getActivity());
-						final Response first = result.responses.iterator().next();
+						final Response first = result.getResponses().iterator().next();
 						Log.i(TAG, "Response =  " + first.toString());
 						dal.addBusStop(BusStop.fromResponse(first));
 						getActivity().finish();
@@ -88,7 +75,7 @@ public class AddView extends ActionBarActivity {
 				}
 				else {
 					Log.e(TAG, "Could not look up bus information", result.error);
-					if (result.error instanceof UnknownBusStop) {
+					if (result.getError() instanceof UnknownBusStop) {
 						showError(getResources().getString(R.string.adddialog_bad_smscode));
 						enableAddButton();
 						

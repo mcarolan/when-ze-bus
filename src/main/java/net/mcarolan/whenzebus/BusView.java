@@ -35,20 +35,7 @@ public class BusView extends ActionBarActivity {
     
     private static final long RESPONSE_REFRESH_MILLIS = TimeUnit.SECONDS.toMillis(30);
     private static final long LISTVIEW_REFRESH_MILLIS = 500;
-    
-    private static class DisplayBusTimesResult {
-    	final boolean isSuccess;
-    	final Set<Response> responses;
-    	final Throwable error;
-    	
-		public DisplayBusTimesResult(boolean isSuccess, Set<Response> responses,
-				Throwable error) {
-			this.isSuccess = isSuccess;
-			this.responses = responses;
-			this.error = error;
-		}
-    }
-	
+
     @Override
 	protected void onPause() {
 		super.onPause();
@@ -122,22 +109,22 @@ public class BusView extends ActionBarActivity {
 		
 	}
 		
-	class DisplayBusTimesTask extends AsyncTask<String, Void, DisplayBusTimesResult> {
+	class DisplayBusTimesTask extends AsyncTask<String, Void, ClientResult> {
 		
 		@Override
-		protected DisplayBusTimesResult doInBackground(String... params) {
+		protected ClientResult doInBackground(String... params) {
 			try {
 				final Set<Response> responses = client.getResponses(selectedBusStop.getStopCode1(), true, Client.DEFAULT_PREDICTION_FIELDS);
-				return new DisplayBusTimesResult(true, responses, null);
+				return new ClientResult(true, responses, null);
 			}
 			catch (Exception e) {
 				Log.e(TAG, "Unable to get bus times", e);
-				return new DisplayBusTimesResult(false, null, e);
+				return new ClientResult(false, null, e);
 			}
 		}
 		
 		@Override
-		protected void onPostExecute(DisplayBusTimesResult result) {
+		protected void onPostExecute(ClientResult result) {
 			super.onPostExecute(result);
 			final ListView listView = (ListView) getActivity().findViewById(R.id.listview);
 			final TextView messageTextView = (TextView) getActivity().findViewById(R.id.message);
