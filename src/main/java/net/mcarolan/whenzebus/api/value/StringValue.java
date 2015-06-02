@@ -1,5 +1,7 @@
 package net.mcarolan.whenzebus.api.value;
 
+import com.google.common.base.Objects;
+
 abstract class StringValue {
 	
 	private final String value;
@@ -13,28 +15,16 @@ abstract class StringValue {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		StringValue that = (StringValue) o;
+		return Objects.equal(value, that.value);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		StringValue other = (StringValue) obj;
-		if (value == null) {
-			if (other.value != null)
-				return false;
-		} else if (!value.equals(other.value))
-			return false;
-		return true;
+	public int hashCode() {
+		return Objects.hashCode(value);
 	}
 
 	@Override

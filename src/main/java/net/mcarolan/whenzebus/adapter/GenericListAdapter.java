@@ -24,8 +24,6 @@ public class GenericListAdapter<T extends GenericListItem> extends ArrayAdapter<
         TextView description;
     }
 
-
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;

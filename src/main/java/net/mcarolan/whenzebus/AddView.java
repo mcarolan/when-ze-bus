@@ -103,20 +103,17 @@ public class AddView extends ActionBarActivity {
 		}
 
 		private View.OnClickListener onAddClick = new View.OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
-				final WhenZeBusDAL dal = new WhenZeBusDAL(getActivity());
-				if (dal.countBusStopsWith(new StopCode1(getSmsCode().getText().toString())) > 0) {
-					showError(getResources().getString(R.string.add_already_present));
-				}
-				else {
-					disableAddButton();
+				final WhenZeBusDAL dal = new WhenZeBusDAL(AddFragment.this.getActivity());
+				if (dal.countBusStopsWith(new StopCode1(AddFragment.this.getSmsCode().getText().toString())) > 0) {
+					AddFragment.this.showError(getResources().getString(R.string.add_already_present));
+				} else {
+					AddFragment.this.disableAddButton();
 					new LookupBusInformation().execute();
 				}
 			}
-			
-		};	
+		};
 
 		private void showError(String message) {
 			getErrorMessage().setText(message);

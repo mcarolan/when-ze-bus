@@ -1,5 +1,7 @@
 package net.mcarolan.whenzebus.api.value;
 
+import com.google.common.base.Objects;
+
 abstract class DoubleValue {
 
 	private final double value;
@@ -13,28 +15,16 @@ abstract class DoubleValue {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(value);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		DoubleValue that = (DoubleValue) o;
+		return Objects.equal(value, that.value);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		DoubleValue other = (DoubleValue) obj;
-		if (Double.doubleToLongBits(value) != Double
-				.doubleToLongBits(other.value))
-			return false;
-		return true;
+	public int hashCode() {
+		return Objects.hashCode(value);
 	}
 
 	@Override

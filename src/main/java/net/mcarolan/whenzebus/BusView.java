@@ -109,7 +109,6 @@ public class BusView extends ActionBarActivity {
 		@Override
 		public void run() {
 			getActivity().runOnUiThread(new Runnable() {
-
 				@Override
 				public void run() {
 					final ListView listview = (ListView) getActivity().findViewById(R.id.listview);
@@ -118,7 +117,6 @@ public class BusView extends ActionBarActivity {
 						adapter.notifyDataSetChanged();
 					}
 				}
-				
 			});
 		}
 		

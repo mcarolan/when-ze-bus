@@ -4,6 +4,7 @@ import java.util.Map;
 
 import net.mcarolan.whenzebus.api.field.Field;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 
 public class Response {
@@ -25,31 +26,15 @@ public class Response {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((fieldNameToStringValue == null) ? 0
-						: fieldNameToStringValue.hashCode());
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Response response = (Response) o;
+		return Objects.equal(fieldNameToStringValue, response.fieldNameToStringValue);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Response other = (Response) obj;
-		if (fieldNameToStringValue == null) {
-			if (other.fieldNameToStringValue != null)
-				return false;
-		} else if (!fieldNameToStringValue.equals(other.fieldNameToStringValue))
-			return false;
-		return true;
+	public int hashCode() {
+		return Objects.hashCode(fieldNameToStringValue);
 	}
-
 }

@@ -72,53 +72,43 @@ public class BusStopView extends ActionBarActivity {
 
 		
 		private final AdapterView.OnItemClickListener itemClick = new AdapterView.OnItemClickListener() {
-
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				final BusStop item = ((BusStopItem) parent.getItemAtPosition(position)).getBusStop();
-				final Intent intent = new Intent(getActivity(), BusView.class);
+				final Intent intent = new Intent(BusStopViewFragment.this.getActivity(), BusView.class);
 				item.writeTo(intent);
-				getActivity().startActivity(intent);
+				BusStopViewFragment.this.getActivity().startActivity(intent);
 			}
-			
 		};
 		
 		private final AdapterView.OnItemLongClickListener longPress = new AdapterView.OnItemLongClickListener() {
-
 			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				final WhenZeBusDAL dal = new WhenZeBusDAL(getActivity());
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				final WhenZeBusDAL dal = new WhenZeBusDAL(BusStopViewFragment.this.getActivity());
 				final BusStop busStop = (BusStop) parent.getItemAtPosition(position);
-				new AlertDialog.Builder(getActivity())
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setTitle("Remove " + busStop.getStopPointName().getValue())
-			.setMessage("Would you like to remove " + busStop.getStopPointName().getValue() + " ?")
-			.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dal.removeBusStop(busStop.getStopCode1());
-						loadBusStops();
-					}
-					
-				})
-			.setNegativeButton("Cancel", null)
-			.show();
+				new AlertDialog.Builder(BusStopViewFragment.this.getActivity())
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setTitle("Remove " + busStop.getStopPointName().getValue())
+						.setMessage("Would you like to remove " + busStop.getStopPointName().getValue() + " ?")
+						.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dal.removeBusStop(busStop.getStopCode1());
+								BusStopViewFragment.this.loadBusStops();
+							}
+						})
+						.setNegativeButton("Cancel", null)
+						.show();
 				return true;
 			}
-			
 		};
 		
 		private final OnClickListener onAddClick = new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-				final Intent intent = new Intent(getActivity(), AddView.class);
-				getActivity().startActivityForResult(intent, 0);
+				final Intent intent = new Intent(BusStopViewFragment.this.getActivity(), AddView.class);
+				BusStopViewFragment.this.getActivity().startActivityForResult(intent, 0);
 			}
-			
 		};
 
 		@Override
