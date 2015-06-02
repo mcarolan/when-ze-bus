@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight">
 
     <LinearLayout
@@ -9,13 +11,11 @@
         android:layout_centerVertical="true">
 
         <TextView
-            android:id="@+id/linename"
+            android:id="@+id/listitem_generic_legend"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="#FF0000"
             android:gravity="center"
-            android:text="Line"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <LinearLayout
@@ -25,21 +25,19 @@
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/destinationtext"
+                android:id="@+id/listitem_generic_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Destination"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
-                android:id="@+id/estimatedtime"
+                android:id="@+id/listitem_generic_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Estimated time"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </LinearLayout>
 
     </LinearLayout>
-    
+
 </RelativeLayout>

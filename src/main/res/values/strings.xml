@@ -9,12 +9,6 @@
 	<string name="adddialog_invalid_response">Invalid response from bus information server. Please try again later.</string>
 	<string name="adddialog_bad_smscode">Couldn\'t find a bus stop with that SMS code.</string>
 	<string name="adddialog_could_not_communicate">There was a problem contacting the bus information server. Please try again later.</string>
-	<string name="prediction_duein">"Due in "</string>
-	<string name="prediction_due">Due</string>
-	<string name="time_oneminute">" minute and "</string>
-	<string name="time_manyminutes">" minutes and "</string>
-	<string name="time_onesecond">" second"</string>
-	<string name="time_manyseconds">" seconds"</string>
 	<string name="manage_delete">Remove</string>
 	<string name="manage_stops">Add/Remove Stops</string>
 	<string name="manage_no_bus_stops">No bus stops have been added</string>
@@ -25,5 +19,11 @@
 	<string name="add_button_pressed">Please wait...</string>
 	<string name="busstoplist_selectstop">Choose a bus stop</string>
 	<string name="busstoplist_add">Add bus stop</string>
-	
+	<string name="busstoplistadapter_towards">"Towards "</string>
+	<string name="predictionmoideladapter_due">Due</string>
+	<string name="predictionmoideladapter_due_in">"Due in "</string>
+	<string name="timeremainingcalculator_minute_and">" minute and "</string>
+	<string name="timeremainingcalculator_minutes_and">" minutes and "</string>
+	<string name="timeremainingcalculator_second">" second "</string>
+	<string name="timeremainingcalculator_seconds">" seconds"</string>
 </resources>

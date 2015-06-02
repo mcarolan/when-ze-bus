@@ -1,11 +1,15 @@
 package net.mcarolan.whenzebus;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import net.mcarolan.whenzebus.adapter.PredictionModelAdapter;
+import net.mcarolan.whenzebus.adapter.GenericListAdapter;
+import net.mcarolan.whenzebus.adapter.item.PredictionModelItem;
+import net.mcarolan.whenzebus.api.PredictionModel;
 import net.mcarolan.whenzebus.api.Response;
 import net.mcarolan.whenzebus.api.Client;
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.common.collect.Lists;
 
 public class BusView extends ActionBarActivity {
 	
@@ -70,6 +76,24 @@ public class BusView extends ActionBarActivity {
         }
     }
 
+	private static List<PredictionModelItem> toPredictionModelItems(Iterable<Response> responses) {
+		final List<PredictionModel> predictionModels = Lists.newArrayList();
+
+		for (final Response response : responses) {
+			predictionModels.add(PredictionModel.fromResponse(response));
+		}
+
+		Collections.sort(predictionModels, PredictionModel.comparator);
+
+		final List<PredictionModelItem> predictionModelItems = Lists.newArrayList();
+
+		for (final PredictionModel predictionModel : predictionModels) {
+			predictionModelItems.add(new PredictionModelItem(predictionModel));
+		}
+
+		return predictionModelItems;
+	}
+
     public static class BusViewFragment extends Fragment {
 	private Timer timer = null;
 
@@ -90,7 +114,7 @@ public class BusView extends ActionBarActivity {
 				public void run() {
 					final ListView listview = (ListView) getActivity().findViewById(R.id.listview);
 					if (listview.getAdapter() != null) {
-						final PredictionModelAdapter adapter = (PredictionModelAdapter) listview.getAdapter();
+						final GenericListAdapter<?> adapter = (GenericListAdapter<?>) listview.getAdapter();
 						adapter.notifyDataSetChanged();
 					}
 				}
@@ -122,19 +146,21 @@ public class BusView extends ActionBarActivity {
 
 			if (result.isSuccess && result.responses.size() > 0) {
 				Log.i(TAG, "Received " + result.responses.size() + " responses for " + selectedBusStop.getStopCode1());
-				final ArrayAdapter<PredictionModel> arrayAdapter = new PredictionModelAdapter(getActivity(), result.responses);
+				final List predictionModelItems = toPredictionModelItems(result.responses);
+
+				final GenericListAdapter<PredictionModelItem> arrayAdapter = new GenericListAdapter<>(getActivity(), predictionModelItems);
 				listView.setAdapter(arrayAdapter);
 				messageTextView.setVisibility(View.GONE);
 				listView.setVisibility(View.VISIBLE);
 			}
 			else if (result.isSuccess) {
 				Log.i(TAG, "0 responses for " + selectedBusStop.getStopCode1());
-				messageTextView.setText(getResources().getString(R.string.busview_no_buses) + selectedBusStop.getStopPointName().getValue());
+				messageTextView.setText(WhenZeBusApplication.getResourceString(R.string.busview_no_buses) + selectedBusStop.getStopPointName().getValue());
 				listView.setVisibility(View.GONE);
 				messageTextView.setVisibility(View.VISIBLE);
 			}
 			else {
-				messageTextView.setText(getResources().getString(R.string.busview_error));
+				messageTextView.setText(WhenZeBusApplication.getResourceString(R.string.busview_error));
 				listView.setVisibility(View.GONE);
 				messageTextView.setVisibility(View.VISIBLE);
 			}
@@ -168,7 +194,7 @@ public class BusView extends ActionBarActivity {
 
 		messageTextView.setVisibility(View.VISIBLE);
 		listview.setVisibility(View.GONE);
-		messageTextView.setText(getResources().getString(R.string.busview_loading_before) + stopPointName + getResources().getString(R.string.busview_loading_after));
+		messageTextView.setText(WhenZeBusApplication.getResourceString(R.string.busview_loading_before) + stopPointName + WhenZeBusApplication.getResourceString(R.string.busview_loading_after));
 	}
 
         @Override

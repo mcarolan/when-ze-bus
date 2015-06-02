@@ -2,26 +2,24 @@ package net.mcarolan.whenzebus;
 
 import java.util.List;
 
-import net.mcarolan.whenzebus.adapter.BusStopListAdapter;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+
+import com.google.common.collect.Lists;
+
+import net.mcarolan.whenzebus.adapter.GenericListAdapter;
+import net.mcarolan.whenzebus.adapter.item.BusStopItem;
 
 public class BusStopView extends ActionBarActivity {
 	
@@ -61,7 +59,11 @@ public class BusStopView extends ActionBarActivity {
 				layoutNoBusStops.setVisibility(View.VISIBLE);
 			}
 			else {
-				final BusStopListAdapter adapter = new BusStopListAdapter(getActivity(), stops);
+				final List<BusStopItem> busStopItems = Lists.newArrayList();
+				for (final BusStop busStop : stops) {
+					busStopItems.add(new BusStopItem(busStop));
+				}
+				final GenericListAdapter<BusStopItem> adapter = new GenericListAdapter<>(getActivity(), busStopItems);
 				listview.setAdapter(adapter);
 				layoutBusStops.setVisibility(View.VISIBLE);
 				layoutNoBusStops.setVisibility(View.GONE);
@@ -74,7 +76,7 @@ public class BusStopView extends ActionBarActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
-				final BusStop item = (BusStop) parent.getItemAtPosition(position);
+				final BusStop item = ((BusStopItem) parent.getItemAtPosition(position)).getBusStop();
 				final Intent intent = new Intent(getActivity(), BusView.class);
 				item.writeTo(intent);
 				getActivity().startActivity(intent);

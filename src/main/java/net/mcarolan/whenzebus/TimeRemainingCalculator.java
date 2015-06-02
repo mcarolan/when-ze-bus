@@ -5,14 +5,8 @@ import org.joda.time.DateTime;
 import android.content.Context;
 
 public class TimeRemainingCalculator {
-	
-	private final Context context;
-	
-	public TimeRemainingCalculator(Context context) {
-		this.context = context;
-	}
 
-	public class TimeRemaining {
+	public static class TimeRemaining {
 		private final boolean isInPast;
 		private final String timeRemainingString;
 		
@@ -31,7 +25,7 @@ public class TimeRemainingCalculator {
 		
 	}
 	
-	public TimeRemaining getTimeRemaining(DateTime until) {
+	public static TimeRemaining getTimeRemaining(DateTime until) {
 		final DateTime now = new DateTime();
 		
 		if (now.getMillis() >= until.getMillis()) {
@@ -45,19 +39,19 @@ public class TimeRemainingCalculator {
 		sb.append(difference.getMinuteOfHour());
 		
 		if (difference.getMinuteOfHour() == 1) {
-			sb.append(context.getResources().getString(R.string.time_oneminute));
+			sb.append(WhenZeBusApplication.getResourceString(R.string.timeremainingcalculator_minute_and));
 		}
 		else {
-			sb.append(context.getResources().getString(R.string.time_manyminutes));
+			sb.append(WhenZeBusApplication.getResourceString(R.string.timeremainingcalculator_minutes_and));
 		}
 		
 		sb.append(difference.getSecondOfMinute());
 		
 		if (difference.getSecondOfMinute() == 1) {
-			sb.append(context.getResources().getString(R.string.time_onesecond));
+			sb.append(WhenZeBusApplication.getResourceString(R.string.timeremainingcalculator_second));
 		}
 		else {
-			sb.append(context.getResources().getString(R.string.time_manyseconds));
+			sb.append(WhenZeBusApplication.getResourceString(R.string.timeremainingcalculator_seconds));
 		}
 		
 		return new TimeRemaining(false, sb.toString());

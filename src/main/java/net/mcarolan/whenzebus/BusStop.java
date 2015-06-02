@@ -1,6 +1,9 @@
 package net.mcarolan.whenzebus;
 
 import android.content.Intent;
+
+import com.google.common.base.Objects;
+
 import net.mcarolan.whenzebus.api.Response;
 import net.mcarolan.whenzebus.api.field.Fields;
 import net.mcarolan.whenzebus.api.value.Latitude;
@@ -79,64 +82,29 @@ public class BusStop {
 
 	@Override
 	public String toString() {
-		return "BusStop [stopCode1=" + stopCode1 + ", stopPointIndicator="
-				+ stopPointIndicator + ", stopPointName=" + stopPointName
-				+ ", towards=" + towards + ", location=" + location + "]";
+		return "BusStop{" +
+				"stopCode1=" + stopCode1 +
+				", stopPointIndicator=" + stopPointIndicator +
+				", stopPointName=" + stopPointName +
+				", towards=" + towards +
+				", location=" + location +
+				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		BusStop busStop = (BusStop) o;
+		return Objects.equal(stopCode1, busStop.stopCode1) &&
+				Objects.equal(stopPointIndicator, busStop.stopPointIndicator) &&
+				Objects.equal(stopPointName, busStop.stopPointName) &&
+				Objects.equal(towards, busStop.towards) &&
+				Objects.equal(location, busStop.location);
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((location == null) ? 0 : location.hashCode());
-		result = prime * result
-				+ ((stopCode1 == null) ? 0 : stopCode1.hashCode());
-		result = prime
-				* result
-				+ ((stopPointIndicator == null) ? 0 : stopPointIndicator
-						.hashCode());
-		result = prime * result
-				+ ((stopPointName == null) ? 0 : stopPointName.hashCode());
-		result = prime * result + ((towards == null) ? 0 : towards.hashCode());
-		return result;
+		return Objects.hashCode(stopCode1, stopPointIndicator, stopPointName, towards, location);
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BusStop other = (BusStop) obj;
-		if (location == null) {
-			if (other.location != null)
-				return false;
-		} else if (!location.equals(other.location))
-			return false;
-		if (stopCode1 == null) {
-			if (other.stopCode1 != null)
-				return false;
-		} else if (!stopCode1.equals(other.stopCode1))
-			return false;
-		if (stopPointIndicator == null) {
-			if (other.stopPointIndicator != null)
-				return false;
-		} else if (!stopPointIndicator.equals(other.stopPointIndicator))
-			return false;
-		if (stopPointName == null) {
-			if (other.stopPointName != null)
-				return false;
-		} else if (!stopPointName.equals(other.stopPointName))
-			return false;
-		if (towards == null) {
-			if (other.towards != null)
-				return false;
-		} else if (!towards.equals(other.towards))
-			return false;
-		return true;
-	}
-	
 }
