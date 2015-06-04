@@ -1,4 +1,4 @@
-package net.mcarolan.whenzebus.api;
+package net.mcarolan.whenzebus.api.client;
 
 import java.util.Map;
 

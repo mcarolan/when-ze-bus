@@ -2,9 +2,10 @@ package net.mcarolan.whenzebus;
 
 import android.content.Intent;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 
-import net.mcarolan.whenzebus.api.Response;
+import net.mcarolan.whenzebus.api.client.Response;
 import net.mcarolan.whenzebus.api.field.Fields;
 import net.mcarolan.whenzebus.api.value.Latitude;
 import net.mcarolan.whenzebus.api.value.Location;
@@ -69,16 +70,19 @@ public class BusStop {
 		final double longitude = intent.getDoubleExtra("longitude", 0.0);
 		return new BusStop(new StopCode1(stopCode1), new StopPointIndicator(stopPointIndicator), new StopPointName(stopPointName), new Towards(towards), new Location(new Latitude(latitude), new Longitude(longitude)));
 	}
-	
-	public static BusStop fromResponse(Response response) {
-		final String stopCode1 = Fields.StopCode1.extract(response);
-		final String stopPointIndicator = Fields.StopPointIndicator.extract(response);
-		final String stopPointName = Fields.StopPointName.extract(response);
-		final String towards = Fields.Towards.extract(response);
-		final double latitude = Fields.Latitude.extract(response);
-		final double longitude = Fields.Longitude.extract(response);
-		return new BusStop(new StopCode1(stopCode1), new StopPointIndicator(stopPointIndicator), new StopPointName(stopPointName), new Towards(towards), new Location(new Latitude(latitude), new Longitude(longitude)));
-	}
+
+	public static Function<Response, BusStop> builder = new Function<Response, BusStop>() {
+		@Override
+		public BusStop apply(Response response) {
+			final String stopCode1 = Fields.StopCode1.extract(response);
+			final String stopPointIndicator = Fields.StopPointIndicator.extract(response);
+			final String stopPointName = Fields.StopPointName.extract(response);
+			final String towards = Fields.Towards.extract(response);
+			final double latitude = Fields.Latitude.extract(response);
+			final double longitude = Fields.Longitude.extract(response);
+			return new BusStop(new StopCode1(stopCode1), new StopPointIndicator(stopPointIndicator), new StopPointName(stopPointName), new Towards(towards), new Location(new Latitude(latitude), new Longitude(longitude)));
+		}
+	};
 
 	@Override
 	public String toString() {

@@ -1,17 +1,16 @@
 package net.mcarolan.whenzebus;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import net.mcarolan.whenzebus.adapter.GenericListAdapter;
-import net.mcarolan.whenzebus.adapter.item.PredictionModelItem;
-import net.mcarolan.whenzebus.api.PredictionModel;
-import net.mcarolan.whenzebus.api.Response;
-import net.mcarolan.whenzebus.api.Client;
+import net.mcarolan.whenzebus.adapter.item.PredictionItem;
+import net.mcarolan.whenzebus.api.client.Client;
+import net.mcarolan.whenzebus.api.client.ClientResult;
+import net.mcarolan.whenzebus.api.request.PredictedArrivalTimeRequest;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
@@ -20,7 +19,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,7 +27,6 @@ import com.google.common.collect.Lists;
 public class BusView extends ActionBarActivity {
 	
 	private static final String TAG = "BusView";
-	private static final Client client = new Client("http://countdown.api.tfl.gov.uk");
         
 	private static BusStop selectedBusStop = null;
     
@@ -63,22 +60,14 @@ public class BusView extends ActionBarActivity {
         }
     }
 
-	private static List<PredictionModelItem> toPredictionModelItems(Iterable<Response> responses) {
-		final List<PredictionModel> predictionModels = Lists.newArrayList();
+	private static List<PredictionItem> toPredictionItems(Iterable<Prediction> predictions) {
+		final List<PredictionItem> predictionItems = Lists.newArrayList();
 
-		for (final Response response : responses) {
-			predictionModels.add(PredictionModel.fromResponse(response));
+		for (final Prediction prediction : predictions) {
+			predictionItems.add(new PredictionItem(prediction));
 		}
 
-		Collections.sort(predictionModels, PredictionModel.comparator);
-
-		final List<PredictionModelItem> predictionModelItems = Lists.newArrayList();
-
-		for (final PredictionModel predictionModel : predictionModels) {
-			predictionModelItems.add(new PredictionModelItem(predictionModel));
-		}
-
-		return predictionModelItems;
+		return predictionItems;
 	}
 
     public static class BusViewFragment extends Fragment {
@@ -109,36 +98,30 @@ public class BusView extends ActionBarActivity {
 		
 	}
 		
-	class DisplayBusTimesTask extends AsyncTask<String, Void, ClientResult> {
+	class DisplayBusTimesTask extends AsyncTask<String, Void, ClientResult<List<Prediction>>> {
 		
 		@Override
 		protected ClientResult doInBackground(String... params) {
-			try {
-				final Set<Response> responses = client.getResponses(selectedBusStop.getStopCode1(), true, Client.DEFAULT_PREDICTION_FIELDS);
-				return new ClientResult(true, responses, null);
-			}
-			catch (Exception e) {
-				Log.e(TAG, "Unable to get bus times", e);
-				return new ClientResult(false, null, e);
-			}
+			final PredictedArrivalTimeRequest request = new PredictedArrivalTimeRequest(selectedBusStop.getStopCode1());
+			return Client.getOrderedResponses(request, Prediction.builder, Prediction.comparator);
 		}
 		
 		@Override
-		protected void onPostExecute(ClientResult result) {
+		protected void onPostExecute(ClientResult<List<Prediction>> result) {
 			super.onPostExecute(result);
 			final ListView listView = (ListView) getActivity().findViewById(R.id.listview);
 			final TextView messageTextView = (TextView) getActivity().findViewById(R.id.message);
 
-			if (result.isSuccess && result.responses.size() > 0) {
-				Log.i(TAG, "Received " + result.responses.size() + " responses for " + selectedBusStop.getStopCode1());
-				final List predictionModelItems = toPredictionModelItems(result.responses);
+			if (result.isSuccess() && result.getResponses().size() > 0) {
+				Log.i(TAG, "Received " + result.getResponses().size() + " responses for " + selectedBusStop.getStopCode1());
+				final List<PredictionItem> predictionModelItems = toPredictionItems(result.getResponses());
 
-				final GenericListAdapter<PredictionModelItem> arrayAdapter = new GenericListAdapter<>(getActivity(), predictionModelItems);
+				final GenericListAdapter<PredictionItem> arrayAdapter = new GenericListAdapter<>(getActivity(), predictionModelItems);
 				listView.setAdapter(arrayAdapter);
 				messageTextView.setVisibility(View.GONE);
 				listView.setVisibility(View.VISIBLE);
 			}
-			else if (result.isSuccess) {
+			else if (result.isSuccess()) {
 				Log.i(TAG, "0 responses for " + selectedBusStop.getStopCode1());
 				messageTextView.setText(WhenZeBusApplication.getResourceString(R.string.busview_no_buses) + selectedBusStop.getStopPointName().getValue());
 				listView.setVisibility(View.GONE);

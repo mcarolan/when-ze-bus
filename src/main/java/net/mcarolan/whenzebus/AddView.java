@@ -2,15 +2,11 @@ package net.mcarolan.whenzebus;
 
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import net.mcarolan.whenzebus.api.Client;
-import net.mcarolan.whenzebus.api.Response;
 import net.mcarolan.whenzebus.api.UnknownBusStop;
-import net.mcarolan.whenzebus.api.field.Fields;
+import net.mcarolan.whenzebus.api.client.Client;
+import net.mcarolan.whenzebus.api.client.ClientResult;
+import net.mcarolan.whenzebus.api.request.BusStopInformationRequest;
 import net.mcarolan.whenzebus.api.value.StopCode1;
-import net.mcarolan.whenzebus.api.value.StopPointName;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,8 +23,6 @@ public class AddView extends ActionBarActivity {
 	
 	private static final String TAG = "AddView";
 
-	private static final Client client = new Client("http://countdown.api.tfl.gov.uk");
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,24 +36,19 @@ public class AddView extends ActionBarActivity {
 
 	public static class AddFragment extends Fragment {
 		
-		private class LookupBusInformation extends AsyncTask<Void, Void, ClientResult> {
+		private class LookupBusInformation extends AsyncTask<Void, Void, ClientResult<Set<BusStop>>> {
 		
 			private StopCode1 stopCode1;
 
 			@Override
-			protected ClientResult doInBackground(Void... params) {
-				try {
-					stopCode1 = new StopCode1(getSmsCode().getText().toString());
-					final Set<Response> result = client.getResponses(stopCode1, true, Client.BUS_INFORMATION_FIELDS);
-					return new ClientResult(true, result, null);
-				}
-				catch (Exception e) {
-					return new ClientResult(false, Sets.<Response>newHashSet(), e);
-				}
+			protected ClientResult<Set<BusStop>> doInBackground(Void... params) {
+				stopCode1 = new StopCode1(getSmsCode().getText().toString());
+				final BusStopInformationRequest request = new BusStopInformationRequest(stopCode1);
+				return Client.getResponses(request, BusStop.builder);
 			}
 
 			@Override
-			protected void onPostExecute(ClientResult result) {
+			protected void onPostExecute(ClientResult<Set<BusStop>> result) {
 				if (result.isSuccess()) {
 					if (result.getResponses().size() != 1) {
 						showError(getResources().getString(R.string.adddialog_invalid_response));
@@ -67,18 +56,17 @@ public class AddView extends ActionBarActivity {
 					}
 					else {
 						final WhenZeBusDAL dal = new WhenZeBusDAL(getActivity());
-						final Response first = result.getResponses().iterator().next();
+						final BusStop first = result.getResponses().iterator().next();
 						Log.i(TAG, "Response =  " + first.toString());
-						dal.addBusStop(BusStop.fromResponse(first));
+						dal.addBusStop(first);
 						getActivity().finish();
 					}
 				}
 				else {
-					Log.e(TAG, "Could not look up bus information", result.error);
+					Log.e(TAG, "Could not look up bus information", result.getError());
 					if (result.getError() instanceof UnknownBusStop) {
 						showError(getResources().getString(R.string.adddialog_bad_smscode));
 						enableAddButton();
-						
 					}
 					else {
 						showError(getResources().getString(R.string.adddialog_could_not_communicate));

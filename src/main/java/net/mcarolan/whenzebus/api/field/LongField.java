@@ -1,6 +1,6 @@
 package net.mcarolan.whenzebus.api.field;
 
-import net.mcarolan.whenzebus.api.Response;
+import net.mcarolan.whenzebus.api.client.Response;
 import android.util.Log;
 
 public class LongField implements Field {

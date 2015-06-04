@@ -1,9 +1,10 @@
-package net.mcarolan.whenzebus.api;
+package net.mcarolan.whenzebus.api.client;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import net.mcarolan.whenzebus.api.client.Response;
 import net.mcarolan.whenzebus.api.field.Field;
 import net.mcarolan.whenzebus.api.field.FieldComparator;
 
@@ -17,7 +18,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public class ResponseParser {
+class ResponseParser {
 	
 	private final String responseString;
 	

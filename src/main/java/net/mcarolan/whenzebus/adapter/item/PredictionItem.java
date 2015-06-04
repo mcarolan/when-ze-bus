@@ -2,33 +2,33 @@ package net.mcarolan.whenzebus.adapter.item;
 
 import com.google.common.base.Objects;
 
-import net.mcarolan.whenzebus.api.PredictionModel;
+import net.mcarolan.whenzebus.Prediction;
 import net.mcarolan.whenzebus.R;
 import net.mcarolan.whenzebus.TimeRemainingCalculator;
 import net.mcarolan.whenzebus.WhenZeBusApplication;
 import net.mcarolan.whenzebus.adapter.GenericListItem;
 
-public class PredictionModelItem implements GenericListItem {
+public class PredictionItem implements GenericListItem {
 
-    private final PredictionModel predictionModel;
+    private final Prediction prediction;
 
-    public PredictionModelItem(PredictionModel predictionModel) {
-        this.predictionModel = predictionModel;
+    public PredictionItem(Prediction prediction) {
+        this.prediction = prediction;
     }
 
     @Override
     public String getLegend() {
-        return predictionModel.getLineName();
+        return prediction.getLineName();
     }
 
     @Override
     public String getTitle() {
-        return predictionModel.getDestinationText();
+        return prediction.getDestinationText();
     }
 
     @Override
     public String getDescription() {
-        final TimeRemainingCalculator.TimeRemaining timeRemaining = TimeRemainingCalculator.getTimeRemaining(predictionModel.getEstimatedTime());
+        final TimeRemainingCalculator.TimeRemaining timeRemaining = TimeRemainingCalculator.getTimeRemaining(prediction.getEstimatedTime());
 
         if (timeRemaining.isInPast()) {
             return WhenZeBusApplication.getResourceString(R.string.predictionmoideladapter_due);
@@ -43,12 +43,12 @@ public class PredictionModelItem implements GenericListItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PredictionModelItem that = (PredictionModelItem) o;
-        return Objects.equal(predictionModel, that.predictionModel);
+        PredictionItem that = (PredictionItem) o;
+        return Objects.equal(prediction, that.prediction);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(predictionModel);
+        return Objects.hashCode(prediction);
     }
 }

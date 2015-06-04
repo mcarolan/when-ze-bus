@@ -1,6 +1,6 @@
 package net.mcarolan.whenzebus.api.field;
 
-import net.mcarolan.whenzebus.api.Response;
+import net.mcarolan.whenzebus.api.client.Response;
 
 public class StringField implements Field {
 	
